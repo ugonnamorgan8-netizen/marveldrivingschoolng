@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle } from "lucide-react";
 import { useRef } from "react";
 import HeroScene3D from "./HeroScene3D";
+import HeroSlideshow from "./HeroSlideshow";
 
 const Hero = () => {
   const sectionRef = useRef<HTMLElement>(null);
@@ -11,6 +12,7 @@ const Hero = () => {
       id="home"
       className="relative pt-24 md:pt-32 pb-16 md:pb-24 bg-gradient-hero overflow-hidden"
     >
+      <HeroSlideshow />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
