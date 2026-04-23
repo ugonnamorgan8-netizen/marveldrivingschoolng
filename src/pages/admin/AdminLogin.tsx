@@ -12,6 +12,7 @@ const AdminLogin = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user, isAdmin, loading } = useAdminAuth();
+  const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -25,6 +26,33 @@ const AdminLogin = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
+
+    if (mode === "signup") {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/admin`,
+        },
+      });
+      setSubmitting(false);
+      if (error) {
+        toast({
+          title: "Sign up failed",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
+      }
+      toast({
+        title: "Account created",
+        description:
+          "Check your email to confirm. Once confirmed, ask the site owner to grant you admin access.",
+      });
+      setMode("signin");
+      return;
+    }
+
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setSubmitting(false);
     if (error) {
@@ -47,7 +75,9 @@ const AdminLogin = () => {
               <Lock className="w-5 h-5 text-primary" />
             </div>
             <div>
-              <h1 className="text-xl font-bold">Admin Sign In</h1>
+              <h1 className="text-xl font-bold">
+                {mode === "signin" ? "Admin Sign In" : "Create Admin Account"}
+              </h1>
               <p className="text-sm text-muted-foreground">Marvel Driving School</p>
             </div>
           </div>
@@ -70,17 +100,44 @@ const AdminLogin = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                autoComplete="current-password"
+                minLength={6}
+                autoComplete={mode === "signin" ? "current-password" : "new-password"}
               />
             </div>
             <Button type="submit" className="w-full" disabled={submitting}>
-              {submitting ? "Signing in…" : "Sign In"}
+              {submitting
+                ? mode === "signin"
+                  ? "Signing in…"
+                  : "Creating account…"
+                : mode === "signin"
+                  ? "Sign In"
+                  : "Sign Up"}
             </Button>
           </form>
 
+          <div className="mt-6 text-center text-sm">
+            {mode === "signin" ? (
+              <button
+                type="button"
+                onClick={() => setMode("signup")}
+                className="text-primary hover:underline font-medium"
+              >
+                Need an account? Sign up
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setMode("signin")}
+                className="text-primary hover:underline font-medium"
+              >
+                Already have an account? Sign in
+              </button>
+            )}
+          </div>
+
           {user && !isAdmin && !loading && (
             <p className="text-sm text-destructive mt-4 text-center">
-              You are signed in but do not have admin access.
+              You are signed in but do not have admin access. Contact the site owner.
             </p>
           )}
         </CardContent>
