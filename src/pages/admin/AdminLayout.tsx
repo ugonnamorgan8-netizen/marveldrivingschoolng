@@ -81,7 +81,7 @@ const AdminLayout = () => {
           <Outlet />
         </div>
         {/* Mobile bottom nav */}
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border grid grid-cols-4 z-40">
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border grid grid-cols-5 z-40">
           {navItems.map((item) => (
             <NavLink
               key={item.to}
