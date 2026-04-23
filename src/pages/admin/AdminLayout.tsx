@@ -3,6 +3,7 @@ import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-do
 import { Inbox, FileText, Image as ImageIcon, MessageSquareQuote, Settings, LogOut, Loader2 } from "lucide-react";
 import { useAdminAuth } from "@/hooks/use-admin-auth";
 import { Button } from "@/components/ui/button";
+import marvelLogo from "@/assets/marvel-logo.jpg";
 
 const navItems = [
   { to: "/admin", label: "Enrollments", icon: Inbox, end: true },
@@ -36,9 +37,16 @@ const AdminLayout = () => {
       {/* Sidebar */}
       <aside className="hidden md:flex flex-col w-64 bg-card border-r border-border">
         <div className="p-6 border-b border-border">
-          <Link to="/" className="block">
-            <span className="text-lg font-bold text-foreground">Marvel Admin</span>
-            <p className="text-xs text-muted-foreground mt-0.5">Marvel Driving School</p>
+          <Link to="/" className="flex items-center gap-3">
+            <img
+              src={marvelLogo}
+              alt="Marvel Driving School logo"
+              className="w-10 h-10 rounded-lg object-cover flex-shrink-0"
+            />
+            <div className="min-w-0">
+              <span className="block text-lg font-bold text-foreground leading-tight">Marvel Admin</span>
+              <p className="text-xs text-muted-foreground mt-0.5 truncate">Marvel Driving School</p>
+            </div>
           </Link>
         </div>
         <nav className="flex-1 p-4 space-y-1">
@@ -70,7 +78,14 @@ const AdminLayout = () => {
 
       {/* Mobile top bar */}
       <div className="md:hidden fixed top-0 left-0 right-0 z-40 bg-card border-b border-border px-4 py-3 flex items-center justify-between">
-        <Link to="/admin" className="font-bold">Marvel Admin</Link>
+        <Link to="/admin" className="flex items-center gap-2 font-bold">
+          <img
+            src={marvelLogo}
+            alt="Marvel Driving School logo"
+            className="w-8 h-8 rounded-md object-cover"
+          />
+          <span>Marvel Admin</span>
+        </Link>
         <Button variant="ghost" size="sm" onClick={signOut}>
           <LogOut className="w-4 h-4" />
         </Button>
