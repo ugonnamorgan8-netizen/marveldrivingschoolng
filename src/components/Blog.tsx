@@ -1,10 +1,61 @@
+import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Calendar, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { blogPosts } from "@/data/blogPosts";
+import { supabase } from "@/integrations/supabase/client";
+import { blogPosts as fallbackPosts } from "@/data/blogPosts";
+
+type DisplayPost = {
+  slug: string;
+  title: string;
+  excerpt: string;
+  image: string;
+  date: string;
+  category: string;
+};
+
+const formatDate = (iso: string) =>
+  new Date(iso).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 
 const Blog = () => {
+  const [posts, setPosts] = useState<DisplayPost[]>(
+    fallbackPosts.map((p) => ({
+      slug: p.slug,
+      title: p.title,
+      excerpt: p.excerpt,
+      image: p.image,
+      date: p.date,
+      category: p.category,
+    }))
+  );
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase
+        .from("blog_posts")
+        .select("slug, title, excerpt, image_url, published_at, category")
+        .eq("published", true)
+        .order("published_at", { ascending: false });
+      if (data && data.length > 0) {
+        setPosts(
+          data.map((p) => ({
+            slug: p.slug,
+            title: p.title,
+            excerpt: p.excerpt,
+            image: p.image_url || fallbackPosts[0].image,
+            date: formatDate(p.published_at),
+            category: p.category,
+          }))
+        );
+      }
+    })();
+  }, []);
+
   return (
     <section id="blog" className="py-20 md:py-28 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -21,7 +72,7 @@ const Blog = () => {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {blogPosts.map((post) => (
+          {posts.map((post) => (
             <Card
               key={post.slug}
               className="overflow-hidden border-border/60 hover:shadow-xl transition-all duration-300 group"

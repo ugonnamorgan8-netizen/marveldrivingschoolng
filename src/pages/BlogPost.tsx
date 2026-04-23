@@ -1,19 +1,136 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ArrowLeft, Calendar, Clock } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, Loader2 } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import Chatbot from "@/components/Chatbot";
 import { Button } from "@/components/ui/button";
-import { blogPosts, getPostBySlug } from "@/data/blogPosts";
+import { supabase } from "@/integrations/supabase/client";
+import { blogPosts as fallbackPosts, getPostBySlug } from "@/data/blogPosts";
+
+type DbPost = {
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  category: string;
+  read_time: string;
+  image_url: string | null;
+  published_at: string;
+};
+
+type DisplayPost = {
+  slug: string;
+  title: string;
+  excerpt: string;
+  image: string;
+  date: string;
+  category: string;
+  readTime: string;
+  content: string[];
+};
+
+const formatDate = (iso: string) =>
+  new Date(iso).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+const fromDb = (p: DbPost): DisplayPost => ({
+  slug: p.slug,
+  title: p.title,
+  excerpt: p.excerpt,
+  image: p.image_url || fallbackPosts[0].image,
+  date: formatDate(p.published_at),
+  category: p.category,
+  readTime: p.read_time,
+  content: p.content.split(/\n\s*\n/).map((s) => s.trim()).filter(Boolean),
+});
 
 const BlogPost = () => {
   const { slug } = useParams<{ slug: string }>();
-  const post = slug ? getPostBySlug(slug) : undefined;
+  const [post, setPost] = useState<DisplayPost | null | undefined>(undefined);
+  const [related, setRelated] = useState<DisplayPost[]>([]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
   }, [slug]);
+
+  useEffect(() => {
+    if (!slug) return;
+    let active = true;
+    (async () => {
+      const { data } = await supabase
+        .from("blog_posts")
+        .select("slug, title, excerpt, content, category, read_time, image_url, published_at")
+        .eq("slug", slug)
+        .eq("published", true)
+        .maybeSingle();
+
+      if (!active) return;
+
+      if (data) {
+        setPost(fromDb(data as DbPost));
+        const { data: rel } = await supabase
+          .from("blog_posts")
+          .select("slug, title, excerpt, content, category, read_time, image_url, published_at")
+          .eq("published", true)
+          .neq("slug", slug)
+          .order("published_at", { ascending: false })
+          .limit(2);
+        if (active && rel) setRelated(rel.map((r) => fromDb(r as DbPost)));
+        return;
+      }
+
+      // fallback to local data
+      const local = getPostBySlug(slug);
+      if (local) {
+        setPost({
+          slug: local.slug,
+          title: local.title,
+          excerpt: local.excerpt,
+          image: local.image,
+          date: local.date,
+          category: local.category,
+          readTime: local.readTime,
+          content: local.content,
+        });
+        setRelated(
+          fallbackPosts
+            .filter((p) => p.slug !== slug)
+            .slice(0, 2)
+            .map((p) => ({
+              slug: p.slug,
+              title: p.title,
+              excerpt: p.excerpt,
+              image: p.image,
+              date: p.date,
+              category: p.category,
+              readTime: p.readTime,
+              content: p.content,
+            }))
+        );
+      } else {
+        setPost(null);
+      }
+    })();
+    return () => {
+      active = false;
+    };
+  }, [slug]);
+
+  if (post === undefined) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Navigation />
+        <main className="flex-1 flex items-center justify-center pt-24">
+          <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!post) {
     return (
@@ -32,8 +149,6 @@ const BlogPost = () => {
       </div>
     );
   }
-
-  const related = blogPosts.filter((p) => p.slug !== post.slug).slice(0, 2);
 
   return (
     <div className="min-h-screen flex flex-col">
