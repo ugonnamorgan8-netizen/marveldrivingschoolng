@@ -137,7 +137,24 @@ const HeroScene3D = ({ containerRef }: Props) => {
       const p = THREE.MathUtils.clamp(scrollTop / maxScroll, 0, 1);
       const now = performance.now();
       const dt = Math.max(16, now - lastT.current) / 1000;
-      const v = (p - lastP.current) / dt;
+      const rawV = (p - lastP.current) / dt;
+
+      // Boost speed when the CarShowcase section is on screen.
+      // 1x far away, up to ~3.5x when section is centered in viewport.
+      let boost = 1;
+      const el = containerRef.current;
+      if (el) {
+        const rect = el.getBoundingClientRect();
+        const vh = window.innerHeight || 1;
+        const sectionCenter = rect.top + rect.height / 2;
+        const viewportCenter = vh / 2;
+        const dist = Math.abs(sectionCenter - viewportCenter);
+        const range = vh * 0.9 + rect.height / 2;
+        const proximity = THREE.MathUtils.clamp(1 - dist / range, 0, 1);
+        boost = 1 + proximity * 2.5;
+      }
+
+      const v = rawV * boost;
       lastP.current = p;
       lastT.current = now;
       // Smooth speed signal
