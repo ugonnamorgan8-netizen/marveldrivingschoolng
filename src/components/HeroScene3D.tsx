@@ -130,13 +130,11 @@ const HeroScene3D = ({ containerRef }: Props) => {
 
   useEffect(() => {
     const update = () => {
-      const el = containerRef.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const vh = window.innerHeight || 1;
-      const total = rect.height + vh * 0.6;
-      const scrolled = THREE.MathUtils.clamp(-rect.top + vh * 0.1, 0, total);
-      const p = scrolled / total;
+      // Drive animation from overall page scroll, not section visibility
+      const doc = document.documentElement;
+      const scrollTop = window.scrollY || doc.scrollTop || 0;
+      const maxScroll = Math.max(1, (doc.scrollHeight || 0) - (window.innerHeight || 0));
+      const p = THREE.MathUtils.clamp(scrollTop / maxScroll, 0, 1);
       const now = performance.now();
       const dt = Math.max(16, now - lastT.current) / 1000;
       const v = (p - lastP.current) / dt;
