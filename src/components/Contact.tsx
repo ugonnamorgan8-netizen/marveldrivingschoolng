@@ -1,13 +1,15 @@
 import { useState } from "react";
-import { Phone, Instagram, Facebook, MapPin, Clock, Send } from "lucide-react";
+import { Phone, Instagram, Facebook, MapPin, Clock, Send, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useSiteSettings } from "@/hooks/use-site-settings";
 
 const Contact = () => {
   const { toast } = useToast();
+  const { settings } = useSiteSettings();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -45,12 +47,19 @@ const Contact = () => {
     setFormData({ name: "", email: "", phone: "", message: "" });
   };
 
+  const waNumber = settings.phone.replace(/[^\d]/g, "");
   const contactInfo = [
     {
       icon: Phone,
       title: "Phone / WhatsApp",
-      content: "+234 816 597 3142",
-      link: "https://wa.me/2348165973142",
+      content: settings.phone,
+      link: waNumber ? `https://wa.me/${waNumber}` : null,
+    },
+    {
+      icon: Mail,
+      title: "Email",
+      content: settings.email,
+      link: `mailto:${settings.email}`,
     },
     {
       icon: Instagram,
@@ -67,13 +76,13 @@ const Contact = () => {
     {
       icon: MapPin,
       title: "Training Ground",
-      content: "BCA Road by Secretariat, beside Vision Africa Radio Station",
+      content: settings.address,
       link: null,
     },
     {
       icon: Clock,
       title: "Operating Hours",
-      content: "Mon-Fri: 8:30 AM – 5:30 PM",
+      content: settings.hours,
       link: null,
     },
   ];

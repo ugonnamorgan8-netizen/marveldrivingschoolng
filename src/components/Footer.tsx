@@ -1,7 +1,10 @@
 import { Phone, Instagram, Facebook, MapPin, Mail } from "lucide-react";
+import { useSiteSettings } from "@/hooks/use-site-settings";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const { settings } = useSiteSettings();
+  const waNumber = settings.phone.replace(/[^\d]/g, "");
 
   return (
     <footer className="bg-foreground text-background py-12 md:py-16">
@@ -38,8 +41,20 @@ const Footer = () => {
             <ul className="space-y-3 text-sm">
               <li className="flex items-start gap-2">
                 <Phone className="w-4 h-4 mt-0.5 flex-shrink-0 text-background/70" />
-                <a href="https://wa.me/2348165973142" className="text-background/70 hover:text-background transition-colors">
-                  +234 816 597 3142
+                <a
+                  href={waNumber ? `https://wa.me/${waNumber}` : "#"}
+                  className="text-background/70 hover:text-background transition-colors"
+                >
+                  {settings.phone}
+                </a>
+              </li>
+              <li className="flex items-start gap-2">
+                <Mail className="w-4 h-4 mt-0.5 flex-shrink-0 text-background/70" />
+                <a
+                  href={`mailto:${settings.email}`}
+                  className="text-background/70 hover:text-background transition-colors break-all"
+                >
+                  {settings.email}
                 </a>
               </li>
               <li className="flex items-start gap-2">
@@ -61,7 +76,7 @@ const Footer = () => {
               </li>
               <li className="flex items-start gap-2">
                 <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0 text-background/70" />
-                <span className="text-background/70">BCA Road by Secretariat</span>
+                <span className="text-background/70">{settings.address}</span>
               </li>
             </ul>
           </div>
@@ -69,13 +84,7 @@ const Footer = () => {
           {/* Hours */}
           <div>
             <h3 className="font-bold mb-4">Operating Hours</h3>
-            <ul className="space-y-2 text-sm text-background/70">
-              <li>Monday - Thursday</li>
-              <li className="font-medium">8:30 AM - 5:30 PM</li>
-              <li className="mt-3">Friday (Theory)</li>
-              <li className="font-medium">10:00 AM - 5:30 PM</li>
-              <li className="mt-3 text-xs">Weekend: By special request</li>
-            </ul>
+            <p className="text-sm text-background/70 whitespace-pre-line">{settings.hours}</p>
           </div>
         </div>
 
