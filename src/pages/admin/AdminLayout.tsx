@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { Inbox, FileText, Image as ImageIcon, Settings, LogOut, Loader2 } from "lucide-react";
+import { Inbox, FileText, Image as ImageIcon, MessageSquareQuote, Settings, LogOut, Loader2 } from "lucide-react";
 import { useAdminAuth } from "@/hooks/use-admin-auth";
 import { Button } from "@/components/ui/button";
 
@@ -8,6 +8,7 @@ const navItems = [
   { to: "/admin", label: "Enrollments", icon: Inbox, end: true },
   { to: "/admin/blog", label: "Blog Posts", icon: FileText },
   { to: "/admin/gallery", label: "Gallery", icon: ImageIcon },
+  { to: "/admin/testimonials", label: "Testimonials", icon: MessageSquareQuote },
   { to: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
@@ -80,7 +81,7 @@ const AdminLayout = () => {
           <Outlet />
         </div>
         {/* Mobile bottom nav */}
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border grid grid-cols-4 z-40">
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border grid grid-cols-5 z-40">
           {navItems.map((item) => (
             <NavLink
               key={item.to}
