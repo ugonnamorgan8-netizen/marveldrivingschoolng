@@ -6,30 +6,29 @@ import Car from "./hero3d/Car";
 import Road from "./hero3d/Road";
 import Scenery from "./hero3d/Scenery";
 import Signs from "./hero3d/Signs";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 /**
  * Cinematic, scroll-driven hero scene.
- * - Real volumetric Marvel training car with spinning wheels
- * - Procedural road, scenery, traffic signs and lights
- * - Camera tracks the car with subtle parallax
- * - Scroll position drives world translation (reversible)
+ * - Animation only runs while the CarShowcase section is in the viewport.
+ * - Lighter rendering on mobile to keep scrolling smooth.
  */
 
 interface SceneProps {
   progress: number;
   speed: number;
+  lite: boolean;
 }
 
 const ROAD_LENGTH = 220;
-const TRAVEL_DISTANCE = 130; // how far the world scrolls past the car
+const TRAVEL_DISTANCE = 130;
 
-const Scene = ({ progress, speed }: SceneProps) => {
+const Scene = ({ progress, speed, lite }: SceneProps) => {
   const worldRef = useRef<THREE.Group>(null);
   const camTarget = useRef(new THREE.Vector3(0, 0.7, 0));
   const cameraOffset = useMemo(() => new THREE.Vector3(4.5, 2.6, 6.2), []);
 
   useFrame((state) => {
-    // Translate the world toward the camera based on scroll progress.
     if (worldRef.current) {
       const targetZ = progress * TRAVEL_DISTANCE;
       worldRef.current.position.z = THREE.MathUtils.lerp(
@@ -38,7 +37,6 @@ const Scene = ({ progress, speed }: SceneProps) => {
         0.12
       );
     }
-    // Camera tracking with slight parallax sway
     const t = state.clock.elapsedTime;
     const sway = Math.sin(t * 0.5) * 0.15;
     const desired = new THREE.Vector3(
@@ -50,24 +48,20 @@ const Scene = ({ progress, speed }: SceneProps) => {
     state.camera.lookAt(camTarget.current);
   });
 
-  // Steering responds to scroll speed
   const steer = THREE.MathUtils.clamp(speed * 1.8, -0.6, 0.6);
 
   return (
     <>
-      {/* Atmosphere — late afternoon */}
       <fog attach="fog" args={["#f4d8b5", 14, 70]} />
-
-      {/* Lighting rig */}
       <ambientLight intensity={0.45} />
       <hemisphereLight args={["#ffe7c2", "#3a3020", 0.5]} />
       <directionalLight
         position={[8, 12, 6]}
         intensity={1.8}
         color="#ffd9a8"
-        castShadow
-        shadow-mapSize-width={2048}
-        shadow-mapSize-height={2048}
+        castShadow={!lite}
+        shadow-mapSize-width={lite ? 512 : 2048}
+        shadow-mapSize-height={lite ? 512 : 2048}
         shadow-camera-near={0.5}
         shadow-camera-far={40}
         shadow-camera-left={-15}
@@ -77,42 +71,43 @@ const Scene = ({ progress, speed }: SceneProps) => {
         shadow-bias={-0.0005}
       />
 
-      {/* Sky/background tint via gradient sphere */}
       <mesh scale={[1, 1, 1]}>
         <sphereGeometry args={[80, 32, 32]} />
         <meshBasicMaterial color="#fde7c4" side={THREE.BackSide} />
       </mesh>
 
-      {/* World group: everything that scrolls past the car */}
       <group ref={worldRef}>
         <Road length={ROAD_LENGTH} />
         <Scenery length={ROAD_LENGTH} />
         <Signs />
       </group>
 
-      {/* Distant clouds */}
-      <Suspense fallback={null}>
-        <group position={[-10, 8, -30]}>
-          <Cloud seed={1} segments={20} bounds={[10, 1.5, 1]} volume={4} color="#ffffff" opacity={0.55} />
-        </group>
-        <group position={[12, 9, -45]}>
-          <Cloud seed={3} segments={20} bounds={[10, 1.5, 1]} volume={4} color="#ffffff" opacity={0.5} />
-        </group>
-      </Suspense>
+      {!lite && (
+        <Suspense fallback={null}>
+          <group position={[-10, 8, -30]}>
+            <Cloud seed={1} segments={20} bounds={[10, 1.5, 1]} volume={4} color="#ffffff" opacity={0.55} />
+          </group>
+          <group position={[12, 9, -45]}>
+            <Cloud seed={3} segments={20} bounds={[10, 1.5, 1]} volume={4} color="#ffffff" opacity={0.5} />
+          </group>
+        </Suspense>
+      )}
 
-      {/* Dust particles around the car */}
-      <Sparkles count={50} scale={[6, 1.2, 6]} position={[0, 0.4, -2]} size={2} speed={0.5} opacity={0.55} color="#fef3c7" />
+      {!lite && (
+        <Sparkles count={50} scale={[6, 1.2, 6]} position={[0, 0.4, -2]} size={2} speed={0.5} opacity={0.55} color="#fef3c7" />
+      )}
 
-      {/* The car stays at world origin; world moves around it */}
       <Suspense fallback={null}>
         <Car speed={speed * 4} steer={steer} />
       </Suspense>
 
       <ContactShadows position={[0, 0.02, 0]} opacity={0.55} scale={10} blur={2.4} far={5} />
 
-      <Suspense fallback={null}>
-        <Environment preset="sunset" />
-      </Suspense>
+      {!lite && (
+        <Suspense fallback={null}>
+          <Environment preset="sunset" />
+        </Suspense>
+      )}
     </>
   );
 };
@@ -122,75 +117,109 @@ interface Props {
 }
 
 const HeroScene3D = ({ containerRef }: Props) => {
+  const isMobile = useIsMobile();
   const [progress, setProgress] = useState(0);
   const [speed, setSpeed] = useState(0);
+  const [active, setActive] = useState(false);
   const lastP = useRef(0);
   const lastT = useRef(performance.now());
   const speedRef = useRef(0);
+  const tickingRef = useRef(false);
+  const activeRef = useRef(false);
 
   useEffect(() => {
-    const update = () => {
-      // Drive animation from overall page scroll, not section visibility
-      const doc = document.documentElement;
-      const scrollTop = window.scrollY || doc.scrollTop || 0;
-      const maxScroll = Math.max(1, (doc.scrollHeight || 0) - (window.innerHeight || 0));
-      const p = THREE.MathUtils.clamp(scrollTop / maxScroll, 0, 1);
+    const el = containerRef.current;
+    if (!el) return;
+
+    // Use IntersectionObserver to know when the section is on screen.
+    const io = new IntersectionObserver(
+      (entries) => {
+        const visible = entries[0]?.isIntersecting ?? false;
+        activeRef.current = visible;
+        setActive(visible);
+      },
+      { rootMargin: "100px 0px", threshold: 0 }
+    );
+    io.observe(el);
+
+    const compute = () => {
+      tickingRef.current = false;
+      if (!activeRef.current) return;
+
+      const node = containerRef.current;
+      if (!node) return;
+      const rect = node.getBoundingClientRect();
+      const vh = window.innerHeight || 1;
+
+      // Local progress: 0 when section just entered, 1 when fully scrolled past.
+      const total = rect.height + vh;
+      const traveled = vh - rect.top;
+      const p = THREE.MathUtils.clamp(traveled / total, 0, 1);
+
       const now = performance.now();
       const dt = Math.max(16, now - lastT.current) / 1000;
       const rawV = (p - lastP.current) / dt;
 
-      // Boost speed when the CarShowcase section is on screen.
-      // 1x far away, up to ~3.5x when section is centered in viewport.
-      let boost = 1;
-      const el = containerRef.current;
-      if (el) {
-        const rect = el.getBoundingClientRect();
-        const vh = window.innerHeight || 1;
-        const sectionCenter = rect.top + rect.height / 2;
-        const viewportCenter = vh / 2;
-        const dist = Math.abs(sectionCenter - viewportCenter);
-        const range = vh * 0.9 + rect.height / 2;
-        const proximity = THREE.MathUtils.clamp(1 - dist / range, 0, 1);
-        boost = 1 + proximity * 2.5;
-      }
+      // Boost when section is centered in viewport.
+      const sectionCenter = rect.top + rect.height / 2;
+      const dist = Math.abs(sectionCenter - vh / 2);
+      const range = vh * 0.9 + rect.height / 2;
+      const proximity = THREE.MathUtils.clamp(1 - dist / range, 0, 1);
+      const boost = 1 + proximity * 2.5;
 
       const v = rawV * boost;
       lastP.current = p;
       lastT.current = now;
-      // Smooth speed signal
       speedRef.current = THREE.MathUtils.lerp(speedRef.current, v, 0.25);
       setProgress(p);
       setSpeed(speedRef.current);
     };
-    update();
-    window.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update);
-    // Decay speed when not scrolling
+
+    const onScroll = () => {
+      if (tickingRef.current) return;
+      tickingRef.current = true;
+      requestAnimationFrame(compute);
+    };
+
+    compute();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+
     const decay = setInterval(() => {
+      if (!activeRef.current) return;
       speedRef.current *= 0.85;
       setSpeed(speedRef.current);
-    }, 80);
+    }, 120);
+
     return () => {
-      window.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
+      io.disconnect();
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
       clearInterval(decay);
     };
   }, [containerRef]);
 
+  // Don't mount the heavy Canvas at all until the section is near.
+  if (!active) {
+    return <div className="absolute inset-0 pointer-events-none" aria-hidden />;
+  }
+
   return (
     <div className="absolute inset-0 pointer-events-none">
       <Canvas
-        shadows
-        dpr={[1, 2]}
+        shadows={!isMobile}
+        dpr={isMobile ? [1, 1.25] : [1, 2]}
+        frameloop={active ? "always" : "demand"}
         camera={{ position: [4.5, 2.6, 6.2], fov: 38 }}
         gl={{
-          antialias: true,
+          antialias: !isMobile,
           alpha: true,
+          powerPreference: "high-performance",
           toneMapping: THREE.ACESFilmicToneMapping,
           toneMappingExposure: 1.1,
         }}
       >
-        <Scene progress={progress} speed={speed} />
+        <Scene progress={progress} speed={speed} lite={isMobile} />
       </Canvas>
     </div>
   );
