@@ -1,4 +1,5 @@
 import { Phone, Instagram, Facebook, MapPin, Mail } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useSiteSettings } from "@/hooks/use-site-settings";
 
 const Footer = () => {
@@ -93,8 +94,8 @@ const Footer = () => {
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-background/60">
             <p>© {currentYear} Marvel Driving School. All rights reserved.</p>
             <div className="flex gap-6">
-              <a href="#" className="hover:text-background transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-background transition-colors">Terms of Service</a>
+              <Link to="/privacy-policy" className="hover:text-background transition-colors">Privacy Policy</Link>
+              <Link to="/terms-of-service" className="hover:text-background transition-colors">Terms of Service</Link>
             </div>
           </div>
         </div>
