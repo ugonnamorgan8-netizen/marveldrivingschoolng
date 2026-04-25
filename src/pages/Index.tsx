@@ -7,7 +7,6 @@ import TrainingSchedule from "@/components/TrainingSchedule";
 import Gallery from "@/components/Gallery";
 import Locations from "@/components/Locations";
 import Testimonials from "@/components/Testimonials";
-import Pricing from "@/components/Pricing";
 import Policies from "@/components/Policies";
 import Blog from "@/components/Blog";
 import FAQ from "@/components/FAQ";
@@ -28,7 +27,6 @@ const Index = () => {
       <Gallery />
       <Locations />
       <Testimonials />
-      <Pricing />
       <Policies />
         <Blog />
         <FAQ />

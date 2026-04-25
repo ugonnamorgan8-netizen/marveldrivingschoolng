@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { ImageIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import galleryVehicles from "@/assets/gallery-vehicles.jpg";
 import galleryStudentDriver from "@/assets/gallery-student-driver.jpg";
@@ -34,6 +36,7 @@ const fallbackItems: GalleryItem[] = [
 
 const Gallery = () => {
   const [items, setItems] = useState<GalleryItem[]>(fallbackItems);
+  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -54,25 +57,29 @@ const Gallery = () => {
     })();
   }, []);
 
+  const previewCount = 3;
+  const visibleItems = showAll ? items : items.slice(0, previewCount);
+  const hasMore = items.length > previewCount;
+
   return (
     <section id="gallery" className="py-16 md:py-24 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16">
+        <div className="text-center max-w-3xl mx-auto mb-10 md:mb-14">
           <h2 className="text-3xl md:text-5xl font-bold mb-4">
             Our <span className="bg-gradient-primary bg-clip-text text-transparent">Gallery</span>
           </h2>
           <p className="text-lg md:text-xl text-muted-foreground">
-            See our training facilities, vehicles, and successful students
+            A glimpse of our training facilities, vehicles, and successful students.
           </p>
         </div>
 
         {/* Gallery Grid */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {items.map((item, index) => (
+          {visibleItems.map((item, index) => (
             <Card
               key={index}
-              className="group overflow-hidden hover:shadow-hover transition-all duration-300 cursor-pointer"
+              className="group overflow-hidden hover:shadow-hover transition-all duration-300"
             >
               <div className="aspect-[4/3] relative overflow-hidden">
                 <img
@@ -81,13 +88,10 @@ const Gallery = () => {
                   loading="lazy"
                   className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
-
-                {/* Category badge */}
                 <div className="absolute top-4 left-4 px-3 py-1 bg-card/90 backdrop-blur-sm rounded-full text-xs font-medium z-10">
                   {item.category}
                 </div>
               </div>
-              
               <div className="p-6">
                 <h3 className="text-lg font-bold mb-2 group-hover:text-primary transition-colors">
                   {item.title}
@@ -100,9 +104,24 @@ const Gallery = () => {
           ))}
         </div>
 
+        {/* View All / Show Less */}
+        {hasMore && (
+          <div className="mt-10 text-center">
+            <Button
+              variant="default"
+              size="lg"
+              onClick={() => setShowAll((v) => !v)}
+              className="group"
+            >
+              <ImageIcon className="mr-2 w-4 h-4" />
+              {showAll ? "Show Less" : `View All Photos (${items.length})`}
+            </Button>
+          </div>
+        )}
+
         {/* Note */}
-        <div className="mt-12 text-center">
-          <p className="text-muted-foreground">
+        <div className="mt-8 text-center">
+          <p className="text-muted-foreground text-sm">
             Want to see more? Follow us on{" "}
             <a
               href="https://instagram.com/marveldrivingschool"
