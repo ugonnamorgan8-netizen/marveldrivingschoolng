@@ -46,7 +46,7 @@ const FAQ = () => {
               FAQ
             </span>
             <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-              Questions, answered
+              Questions Answered
             </h2>
             <p className="text-lg text-muted-foreground">
               Everything you need to know before enrolling at Marvel Driving School.
