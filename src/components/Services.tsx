@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Calendar,
@@ -12,6 +13,7 @@ import {
   ArrowRight,
   CheckCircle2,
 } from "lucide-react";
+import EnrollmentDialog from "./EnrollmentDialog";
 
 type Course = {
   icon: React.ComponentType<{ className?: string }>;
