@@ -17,10 +17,10 @@ const VEHICLES = [
 ];
 
 const BRANCHES = [
+  "Head Office — Old Timber Junction, Umuahia",
   "Office 1 — Umudike",
-  "Office 2 — BCA Road (Head Office)",
+  "Office 2 — BCA Road (Practical Training Ground)",
   "Office 3 — Aba Road",
-  "Timber Junction",
 ];
 
 const QuickEnrollment = () => {
