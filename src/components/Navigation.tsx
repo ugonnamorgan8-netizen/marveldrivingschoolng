@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import marvelLogo from "@/assets/marvel-logo.jpg";
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -54,9 +53,6 @@ const Navigation = () => {
             {navItems.map(item => <a key={item.label} href={item.href} className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors rounded-md hover:bg-accent">
                 {item.label}
               </a>)}
-            <Button variant="default" size="sm" className="ml-4" asChild>
-              <a href="#contact">Book Now</a>
-            </Button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -70,11 +66,6 @@ const Navigation = () => {
             {navItems.map(item => <a key={item.label} href={item.href} onClick={() => setIsOpen(false)} className="block px-4 py-3 text-base font-medium text-muted-foreground hover:text-primary hover:bg-accent rounded-md transition-colors">
                 {item.label}
               </a>)}
-            <Button variant="default" size="default" className="w-full mt-4" asChild>
-              <a href="#contact" onClick={() => setIsOpen(false)}>
-                Book Now
-              </a>
-            </Button>
           </div>}
       </div>
     </nav>;
