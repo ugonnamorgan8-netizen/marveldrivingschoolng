@@ -353,6 +353,13 @@ const Services = () => {
           Optional FRSC license processing fees may apply. Contact us for the latest rates.
         </p>
       </div>
+
+      <EnrollmentDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        defaultCourse={prefill.course}
+        triggerSource={prefill.source}
+      />
     </section>
   );
 };
