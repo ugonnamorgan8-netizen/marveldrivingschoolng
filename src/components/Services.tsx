@@ -304,10 +304,11 @@ const Services = () => {
 
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                 {group.services.map((service) => (
-                  <a
-                    href="#contact"
+                  <button
+                    type="button"
                     key={service.title}
-                    className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-2xl"
+                    onClick={() => openEnroll(service.title, `Services — ${group.heading}: ${service.title}`)}
+                    className="group block text-left w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-2xl"
                     aria-label={`Enroll for ${service.title}`}
                   >
                     <Card className="relative h-full overflow-hidden hover:shadow-hover transition-all duration-300 group-hover:-translate-y-1">
@@ -341,7 +342,7 @@ const Services = () => {
                         </div>
                       </CardContent>
                     </Card>
-                  </a>
+                  </button>
                 ))}
               </div>
             </div>
