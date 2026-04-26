@@ -203,6 +203,14 @@ const groups: ServiceGroup[] = [
 ];
 
 const Services = () => {
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [prefill, setPrefill] = useState<{ course?: string; source?: string }>({});
+
+  const openEnroll = (title: string, source: string) => {
+    setPrefill({ course: title, source });
+    setDialogOpen(true);
+  };
+
   return (
     <section id="services" className="py-16 md:py-24 bg-muted/30">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
