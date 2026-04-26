@@ -44,8 +44,8 @@ const QuickEnrollment = () => {
       full_name: form.name.trim(),
       phone: form.phone.trim(),
       email: "",
-      service: form.vehicle,
-      message: `Preferred branch: ${form.branch}`,
+      service: `Vehicle: ${form.vehicle}`,
+      message: `Preferred Branch: ${form.branch}`,
     });
     setSubmitting(false);
     if (error) {
