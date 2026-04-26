@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Phone, Mail, Trash2 } from "lucide-react";
+import { Loader2, Phone, Mail, Trash2, Car, MapPin } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -141,15 +141,33 @@ const AdminEnrollments = () => {
                   <a href={`tel:${e.phone}`} className="flex items-center gap-2 text-foreground hover:text-primary">
                     <Phone className="w-4 h-4" /> {e.phone}
                   </a>
-                  <a href={`mailto:${e.email}`} className="flex items-center gap-2 text-foreground hover:text-primary">
-                    <Mail className="w-4 h-4" /> {e.email}
-                  </a>
+                  {e.email && e.email.trim() !== "" && (
+                    <a href={`mailto:${e.email}`} className="flex items-center gap-2 text-foreground hover:text-primary">
+                      <Mail className="w-4 h-4" /> {e.email}
+                    </a>
+                  )}
                 </div>
 
-                {e.service && <p className="mt-3 text-sm"><span className="font-medium">Interested in:</span> {e.service}</p>}
-                {e.message && (
-                  <div className="mt-3 p-3 bg-muted/50 rounded-lg text-sm whitespace-pre-wrap">
-                    {e.message}
+                {(e.service || e.message) && (
+                  <div className="mt-3 grid sm:grid-cols-2 gap-3">
+                    {e.service && (
+                      <div className="flex items-start gap-2 p-3 bg-primary/5 border border-primary/20 rounded-lg text-sm">
+                        <Car className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                        <div>
+                          <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Vehicle</div>
+                          <div className="font-medium">{e.service.replace(/^Vehicle:\s*/i, "")}</div>
+                        </div>
+                      </div>
+                    )}
+                    {e.message && (
+                      <div className="flex items-start gap-2 p-3 bg-accent/50 border border-border rounded-lg text-sm">
+                        <MapPin className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                        <div>
+                          <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Preferred Branch</div>
+                          <div className="font-medium whitespace-pre-wrap">{e.message.replace(/^Preferred Branch:\s*/i, "")}</div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </CardContent>

@@ -17,10 +17,10 @@ const VEHICLES = [
 ];
 
 const BRANCHES = [
+  "Head Office — Old Timber Junction, Umuahia",
   "Office 1 — Umudike",
-  "Office 2 — BCA Road (Head Office)",
+  "Office 2 — BCA Road (Practical Training Ground)",
   "Office 3 — Aba Road",
-  "Timber Junction",
 ];
 
 const QuickEnrollment = () => {
@@ -44,8 +44,8 @@ const QuickEnrollment = () => {
       full_name: form.name.trim(),
       phone: form.phone.trim(),
       email: "",
-      service: form.vehicle,
-      message: `Preferred branch: ${form.branch}`,
+      service: `Vehicle: ${form.vehicle}`,
+      message: `Preferred Branch: ${form.branch}`,
     });
     setSubmitting(false);
     if (error) {
