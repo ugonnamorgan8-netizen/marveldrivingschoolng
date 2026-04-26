@@ -238,10 +238,11 @@ const Services = () => {
 
           <div className="grid md:grid-cols-2 gap-6 md:gap-8 max-w-5xl mx-auto">
             {courses.map((course) => (
-              <a
-                href="#contact"
+              <button
+                type="button"
                 key={course.title}
-                className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-2xl"
+                onClick={() => openEnroll(course.title, `Services — Course Card: ${course.title}`)}
+                className="group block text-left w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-2xl"
                 aria-label={`Enroll for ${course.title}`}
               >
                 <Card className="relative h-full overflow-hidden hover:shadow-hover transition-all duration-300 group-hover:-translate-y-1 border-2 hover:border-primary/40">
@@ -287,7 +288,7 @@ const Services = () => {
                     </div>
                   </CardContent>
                 </Card>
-              </a>
+              </button>
             ))}
           </div>
         </div>
