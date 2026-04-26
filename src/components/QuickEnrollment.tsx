@@ -124,7 +124,7 @@ const QuickEnrollment = () => {
           className="w-full"
           disabled={submitting}
         >
-          {submitting ? "Sending…" : "Book a Lesson 🚗"}
+          {submitting ? "Sending…" : "Book a Lesson"}
         </Button>
       </form>
     </div>
