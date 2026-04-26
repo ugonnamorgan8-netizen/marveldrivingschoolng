@@ -89,24 +89,13 @@ const groups: ServiceGroup[] = [
     ],
   },
   {
-    heading: "Skill-Building Courses",
-    subtitle: "Refine, refresh and re-test your driving knowledge.",
+    heading: "Test Prep & Skill Refinement",
+    subtitle: "For drivers who already know the basics — sharpen, refresh, and pass your test.",
     services: [
-      {
-        icon: GraduationCap,
-        title: "Beginner Driving Lessons",
-        description: "Comprehensive program for first-time drivers — from zero to confident on the road.",
-        features: [
-          "Full beginner curriculum",
-          "Patient, FRSC-trained instructors",
-          "Target-based progress",
-        ],
-        price: "₦90,000",
-      },
       {
         icon: RotateCcw,
         title: "Refresher Course",
-        description: "Brush up your skills, regain confidence and get back behind the wheel safely.",
+        description: "For licensed drivers who've been off the wheel — rebuild confidence and polish bad habits.",
         features: [
           "Personalised pace",
           "Confidence-rebuilding drills",
@@ -136,7 +125,7 @@ const groups: ServiceGroup[] = [
         price: "Included",
       },
       {
-        icon: Heart,
+        icon: GraduationCap,
         title: "Friday Theory Classes",
         description: "Comprehensive highway code instruction every Friday from 10:00 AM.",
         features: [
@@ -164,7 +153,18 @@ const groups: ServiceGroup[] = [
         price: "On Request",
       },
       {
-        icon: ClipboardCheck,
+        icon: FileText,
+        title: "International Driver's License",
+        description: "Get your International Driving Permit (IDP) for travel and driving abroad — fully processed.",
+        features: [
+          "IDP application handled",
+          "Valid in 150+ countries",
+          "Fast turnaround",
+        ],
+        price: "On Request",
+      },
+      {
+        icon: Heart,
         title: "Accident Management & First Aid",
         description: "Essential emergency response and first-aid training for every road user.",
         features: [
