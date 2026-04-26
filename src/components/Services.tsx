@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Calendar,
@@ -12,6 +13,7 @@ import {
   ArrowRight,
   CheckCircle2,
 } from "lucide-react";
+import EnrollmentDialog from "./EnrollmentDialog";
 
 type Course = {
   icon: React.ComponentType<{ className?: string }>;
@@ -201,6 +203,14 @@ const groups: ServiceGroup[] = [
 ];
 
 const Services = () => {
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [prefill, setPrefill] = useState<{ course?: string; source?: string }>({});
+
+  const openEnroll = (title: string, source: string) => {
+    setPrefill({ course: title, source });
+    setDialogOpen(true);
+  };
+
   return (
     <section id="services" className="py-16 md:py-24 bg-muted/30">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -228,10 +238,11 @@ const Services = () => {
 
           <div className="grid md:grid-cols-2 gap-6 md:gap-8 max-w-5xl mx-auto">
             {courses.map((course) => (
-              <a
-                href="#contact"
+              <button
+                type="button"
                 key={course.title}
-                className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-2xl"
+                onClick={() => openEnroll(course.title, `Services — Course Card: ${course.title}`)}
+                className="group block text-left w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-2xl"
                 aria-label={`Enroll for ${course.title}`}
               >
                 <Card className="relative h-full overflow-hidden hover:shadow-hover transition-all duration-300 group-hover:-translate-y-1 border-2 hover:border-primary/40">
@@ -277,7 +288,7 @@ const Services = () => {
                     </div>
                   </CardContent>
                 </Card>
-              </a>
+              </button>
             ))}
           </div>
         </div>
@@ -293,10 +304,11 @@ const Services = () => {
 
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                 {group.services.map((service) => (
-                  <a
-                    href="#contact"
+                  <button
+                    type="button"
                     key={service.title}
-                    className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-2xl"
+                    onClick={() => openEnroll(service.title, `Services — ${group.heading}: ${service.title}`)}
+                    className="group block text-left w-full focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-2xl"
                     aria-label={`Enroll for ${service.title}`}
                   >
                     <Card className="relative h-full overflow-hidden hover:shadow-hover transition-all duration-300 group-hover:-translate-y-1">
@@ -330,7 +342,7 @@ const Services = () => {
                         </div>
                       </CardContent>
                     </Card>
-                  </a>
+                  </button>
                 ))}
               </div>
             </div>
@@ -341,6 +353,13 @@ const Services = () => {
           Optional FRSC license processing fees may apply. Contact us for the latest rates.
         </p>
       </div>
+
+      <EnrollmentDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        defaultCourse={prefill.course}
+        triggerSource={prefill.source}
+      />
     </section>
   );
 };
