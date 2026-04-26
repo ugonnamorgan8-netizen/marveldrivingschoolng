@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Phone, Mail, Trash2 } from "lucide-react";
+import { Loader2, Phone, Mail, Trash2, Car, MapPin } from "lucide-react";
 import {
   Select,
   SelectContent,
