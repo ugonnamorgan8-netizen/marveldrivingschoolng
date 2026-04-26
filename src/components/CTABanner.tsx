@@ -1,7 +1,13 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import EnrollmentDialog from "./EnrollmentDialog";
+
 const CTABanner = () => {
-  return <section className="py-16 md:py-24 bg-gradient-primary relative overflow-hidden">
+  const [open, setOpen] = useState(false);
+
+  return (
+    <section className="py-16 md:py-24 bg-gradient-primary relative overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute top-0 left-1/4 w-64 h-64 bg-white rounded-full blur-3xl"></div>
@@ -14,18 +20,21 @@ const CTABanner = () => {
             Ready to Begin Your Driving Journey?
           </h2>
           <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-            Join hundreds of satisfied students who learned to drive with confidence at Marvel Driving School. 
+            Join hundreds of satisfied students who learned to drive with confidence at Marvel Driving School.
             Book your first lesson today and take the first step toward driving independence.
           </p>
-          
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button variant="secondary" size="lg" className="w-full sm:w-auto bg-white text-primary hover:bg-white/90 shadow-lg group" asChild>
-              <a href="#contact">
-                Book Your First Lesson
-                <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-              </a>
+            <Button
+              variant="secondary"
+              size="lg"
+              className="w-full sm:w-auto bg-white text-primary hover:bg-white/90 shadow-lg group"
+              onClick={() => setOpen(true)}
+            >
+              Book Your First Lesson
+              <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
-            
+
             <Button variant="outline" size="lg" className="w-full sm:w-auto border-2 border-white text-white bg-transparent hover:bg-white hover:text-primary" asChild>
               <a href="https://wa.me/2348165973142" target="_blank" rel="noopener noreferrer">
                 Chat on WhatsApp
@@ -54,6 +63,14 @@ const CTABanner = () => {
           </div>
         </div>
       </div>
-    </section>;
+
+      <EnrollmentDialog
+        open={open}
+        onOpenChange={setOpen}
+        triggerSource="CTA Banner — Book Your First Lesson"
+      />
+    </section>
+  );
 };
+
 export default CTABanner;
