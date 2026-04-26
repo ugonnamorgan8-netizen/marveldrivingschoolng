@@ -49,7 +49,7 @@ const Locations = () => {
             Our <span className="bg-gradient-primary bg-clip-text text-transparent">Locations</span>
           </h2>
           <p className="text-lg md:text-xl text-muted-foreground">
-            Four convenient offices across Umuahia & Aba — find the branch closest to you
+            Four convenient offices across Umuahia — find the branch closest to you
           </p>
         </div>
 
