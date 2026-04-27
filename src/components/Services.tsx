@@ -386,6 +386,7 @@ const Services = () => {
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         defaultCourse={prefill.course}
+        defaultVehicle={prefill.vehicle}
         triggerSource={prefill.source}
       />
     </section>
