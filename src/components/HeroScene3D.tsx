@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState, Suspense, useMemo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { ContactShadows, Environment, Sparkles, Cloud } from "@react-three/drei";
+import { ContactShadows, Sparkles } from "@react-three/drei";
 import * as THREE from "three";
 import Car from "./hero3d/Car";
 import Road from "./hero3d/Road";
@@ -83,17 +83,6 @@ const Scene = ({ progress, speed, lite }: SceneProps) => {
       </group>
 
       {!lite && (
-        <Suspense fallback={null}>
-          <group position={[-10, 8, -30]}>
-            <Cloud seed={1} segments={20} bounds={[10, 1.5, 1]} volume={4} color="#ffffff" opacity={0.55} />
-          </group>
-          <group position={[12, 9, -45]}>
-            <Cloud seed={3} segments={20} bounds={[10, 1.5, 1]} volume={4} color="#ffffff" opacity={0.5} />
-          </group>
-        </Suspense>
-      )}
-
-      {!lite && (
         <Sparkles count={50} scale={[6, 1.2, 6]} position={[0, 0.4, -2]} size={2} speed={0.5} opacity={0.55} color="#fef3c7" />
       )}
 
@@ -102,12 +91,6 @@ const Scene = ({ progress, speed, lite }: SceneProps) => {
       </Suspense>
 
       <ContactShadows position={[0, 0.02, 0]} opacity={0.55} scale={10} blur={2.4} far={5} />
-
-      {!lite && (
-        <Suspense fallback={null}>
-          <Environment preset="sunset" />
-        </Suspense>
-      )}
     </>
   );
 };
