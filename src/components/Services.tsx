@@ -202,12 +202,40 @@ const groups: ServiceGroup[] = [
   },
 ];
 
+// Maps card titles to the exact option values used in EnrollmentDialog's COURSES list
+const COURSE_VALUE_MAP: Record<string, string> = {
+  "2 Weeks Refresher Course": "2 Weeks Refresher Course (₦55,000)",
+  "1 Month Beginners Course": "1 Month Beginners Course (₦90,000)",
+  "Motorcycle Training": "Motorcycle Training",
+  "Tricycle (Keke) Training": "Tricycle (Keke) Training",
+  "Truck Driving": "Truck Training",
+  "Basic Car Maintenance": "Basic Car Maintenance",
+  "Mock Driving Tests": "Mock Test / CBT Prep",
+  "Weekly FRSC CBT Tests": "Mock Test / CBT Prep",
+  "Friday Theory Classes": "Friday Theory Class",
+  "Driver's License Processing": "FRSC Driver's License Processing",
+  "International Driver's License": "International Driver's License (IDP)",
+  "Accident Management & First Aid": "Other / Not sure yet",
+};
+
+// Maps card titles to vehicle dropdown values where applicable
+const VEHICLE_VALUE_MAP: Record<string, string> = {
+  "1 Month Beginners Course": "Both (Automatic & Manual)",
+  "Motorcycle Training": "Motorcycle",
+  "Tricycle (Keke) Training": "Tricycle (Keke)",
+  "Truck Driving": "Truck",
+};
+
 const Services = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [prefill, setPrefill] = useState<{ course?: string; source?: string }>({});
+  const [prefill, setPrefill] = useState<{ course?: string; vehicle?: string; source?: string }>({});
 
   const openEnroll = (title: string, source: string) => {
-    setPrefill({ course: title, source });
+    setPrefill({
+      course: COURSE_VALUE_MAP[title] ?? title,
+      vehicle: VEHICLE_VALUE_MAP[title],
+      source,
+    });
     setDialogOpen(true);
   };
 
@@ -358,6 +386,7 @@ const Services = () => {
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         defaultCourse={prefill.course}
+        defaultVehicle={prefill.vehicle}
         triggerSource={prefill.source}
       />
     </section>
