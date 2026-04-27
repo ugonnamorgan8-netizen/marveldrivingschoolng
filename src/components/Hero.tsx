@@ -15,7 +15,7 @@ const Hero = () => {
       <HeroSlideshow />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid lg:grid-cols-[1fr_auto] gap-10 lg:gap-12 items-center">
-          <div className="max-w-3xl space-y-6 md:space-y-8 [text-shadow:_0_2px_12px_hsl(var(--background)/0.85)]">
+          <div className="max-w-3xl space-y-6 md:space-y-8 text-white [text-shadow:_0_2px_12px_rgb(0_0_0_/_0.7)]">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent rounded-full text-sm font-medium text-accent-foreground shadow-[0_0_0_1px_hsl(var(--primary)/0.25),0_4px_16px_-4px_hsl(var(--primary)/0.35)] [text-shadow:none]">
               <CheckCircle className="w-4 h-4" />
               FRSC Approved • RC 2564711
@@ -28,7 +28,7 @@ const Hero = () => {
               </span>
             </h1>
 
-            <p className="text-lg md:text-xl text-foreground/90 max-w-2xl font-medium">
+            <p className="text-lg md:text-xl text-white/95 max-w-2xl font-medium">
               Abia's premier FRSC-approved driving school. Master the road with professional instructors, modern training methods, and internationally recognized best practices.
             </p>
 
@@ -39,18 +39,18 @@ const Hero = () => {
             </div>
 
             {/* Trust Indicators */}
-            <div className="flex flex-wrap gap-6 pt-6 border-t border-border/60">
+            <div className="flex flex-wrap gap-6 pt-6 border-t border-white/30">
               <div>
                 <div className="text-3xl font-bold text-primary [-webkit-text-stroke:0.5px_hsl(var(--primary)/0.4)]">3000+</div>
-                <div className="text-sm text-foreground/80 font-medium">Students Trained</div>
+                <div className="text-sm text-white/90 font-medium">Students Trained</div>
               </div>
               <div>
                 <div className="text-3xl font-bold text-primary [-webkit-text-stroke:0.5px_hsl(var(--primary)/0.4)]">7+</div>
-                <div className="text-sm text-foreground/80 font-medium">Years Experience</div>
+                <div className="text-sm text-white/90 font-medium">Years Experience</div>
               </div>
               <div>
                 <div className="text-3xl font-bold text-primary [-webkit-text-stroke:0.5px_hsl(var(--primary)/0.4)]">98%</div>
-                <div className="text-sm text-foreground/80 font-medium">Success Rate</div>
+                <div className="text-sm text-white/90 font-medium">Success Rate</div>
               </div>
             </div>
           </div>
