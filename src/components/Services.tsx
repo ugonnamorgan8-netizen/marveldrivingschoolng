@@ -297,7 +297,7 @@ const Services = () => {
         <div className="space-y-16 md:space-y-20">
           {groups.map((group) => (
             <div key={group.heading}>
-              <div className="mb-8 md:mb-10 text-center md:text-left max-w-3xl mx-auto md:mx-0">
+              <div className="mb-8 md:mb-10 text-center max-w-3xl mx-auto">
                 <h3 className="text-2xl md:text-3xl font-bold mb-2">{group.heading}</h3>
                 <p className="text-muted-foreground">{group.subtitle}</p>
               </div>
