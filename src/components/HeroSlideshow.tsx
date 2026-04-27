@@ -79,9 +79,9 @@ const HeroSlideshow = () => {
         );
       })}
 
-      {/* Overlay for legibility — lighter so images show through more clearly */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background/55 via-background/35 to-background/65" />
-      <div className="absolute inset-0 bg-gradient-to-r from-background/55 via-background/15 to-transparent" />
+      {/* Black overlay for sharper image contrast and text legibility */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/20 to-transparent" />
     </div>
   );
 };
