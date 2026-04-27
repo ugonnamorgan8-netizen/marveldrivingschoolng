@@ -57,7 +57,7 @@ const Gallery = () => {
     })();
   }, []);
 
-  const previewCount = 3;
+  const previewCount = 4;
   const visibleItems = showAll ? items : items.slice(0, previewCount);
   const hasMore = items.length > previewCount;
 
