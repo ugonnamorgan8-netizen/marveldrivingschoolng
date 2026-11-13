@@ -9,8 +9,11 @@ export const env = (name, fallback) => {
   return v === undefined || v === "" ? fallback : v;
 };
 
+// Public project URL (not a secret). Override with SUPABASE_URL if the project ever moves.
+const PUBLIC_SUPABASE_URL = "https://koqthbdxxxxbyttpboxl.supabase.co";
+
 export const supabaseConfig = () => ({
-  url: env("SUPABASE_URL", env("VITE_SUPABASE_URL")),
+  url: env("SUPABASE_URL", env("VITE_SUPABASE_URL", PUBLIC_SUPABASE_URL)),
   serviceKey: env("SUPABASE_SERVICE_ROLE_KEY"),
 });
 
