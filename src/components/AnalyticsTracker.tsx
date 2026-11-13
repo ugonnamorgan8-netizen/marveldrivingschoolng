@@ -7,7 +7,13 @@ import { trackEvent } from "@/lib/api";
  * (or ancestor) carrying a `data-track="label"` attribute. Admin pages are skipped.
  */
 const AnalyticsTracker = () => {
-  const { pathname } = useLocation();
+  const { pathname, hash } = useLocation();
+
+  // New page without a #section: start at the top (React Router keeps scroll position otherwise).
+  useEffect(() => {
+    if (!hash) window.scrollTo(0, 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
 
   useEffect(() => {
     if (pathname.startsWith("/admin")) return;
