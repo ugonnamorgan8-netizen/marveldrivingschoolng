@@ -8,15 +8,13 @@ Vercel → project **marveldrivingschoolng** → Settings → Environment Variab
 
 | Name | Value | Secret? |
 |---|---|---|
-| `VITE_SUPABASE_URL` | same as in your local `.env` | public |
-| `VITE_SUPABASE_PUBLISHABLE_KEY` | same as in your local `.env` (anon key) | public |
-| `VITE_SUPABASE_PROJECT_ID` | same as in your local `.env` | public |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase → Project Settings → API → `service_role` key | **SECRET** |
 | `RESEND_API_KEY` | Resend → API Keys → create key (sending access) | **SECRET** |
 | `NOTIFY_EMAIL_TO` | inbox that should receive enquiries (comma-separate several) | |
-| `NOTIFY_EMAIL_FROM` | `Marvel Driving School <bookings@YOUR-DOMAIN>` once your domain is verified in Resend. Until then leave unset (uses `onboarding@resend.dev`, which can only email the address you signed up to Resend with) | |
-| `IP_HASH_SALT` | any long random string (e.g. 40+ random characters) | **SECRET** |
-| `ALLOWED_ORIGINS` | optional — only if another domain must call `/api` | |
+| `NOTIFY_EMAIL_FROM` | optional — `Marvel Driving School <bookings@YOUR-DOMAIN>` once your domain is verified in Resend | |
+
+The public Supabase URL/anon key are already in `.env.production` (they are public by design).
+After adding or changing variables: Vercel → Deployments → ⋯ → **Redeploy**.
 
 Rules: never put a secret in a variable starting with `VITE_` (those are shipped to browsers). Never commit `.env`.
 
