@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import galleryVehicles from "@/assets/gallery-vehicles.jpg";
 import galleryStudentDriver from "@/assets/gallery-student-driver.jpg";
@@ -32,8 +34,11 @@ const fallbackItems: GalleryItem[] = [
   { title: "Motorbike Training", description: "Safe rider training with full protective gear", category: "Training", image: galleryBikes },
 ];
 
+const INITIAL_COUNT = 6;
+
 const Gallery = () => {
   const [items, setItems] = useState<GalleryItem[]>(fallbackItems);
+  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -54,6 +59,8 @@ const Gallery = () => {
     })();
   }, []);
 
+  const displayedItems = showAll ? items : items.slice(0, INITIAL_COUNT);
+
   return (
     <section id="gallery" className="py-16 md:py-24 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -68,17 +75,18 @@ const Gallery = () => {
         </div>
 
         {/* Gallery Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {items.map((item, index) => (
+        <div className="grid-3-centered max-w-6xl mx-auto">
+          {displayedItems.map((item, index) => (
             <Card
               key={index}
-              className="group overflow-hidden hover:shadow-hover transition-all duration-300 cursor-pointer"
+              className="group overflow-hidden hover:shadow-hover transition-all duration-300 flex flex-col"
             >
-              <div className="aspect-[4/3] relative overflow-hidden">
+              <div className="aspect-[4/3] relative overflow-hidden bg-muted">
                 <img
                   src={item.image}
                   alt={item.title}
                   loading="lazy"
+                  decoding="async"
                   className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
 
@@ -88,7 +96,7 @@ const Gallery = () => {
                 </div>
               </div>
               
-              <div className="p-6">
+              <div className="p-5 md:p-6">
                 <h3 className="text-lg font-bold mb-2 group-hover:text-primary transition-colors">
                   {item.title}
                 </h3>
@@ -100,6 +108,30 @@ const Gallery = () => {
           ))}
         </div>
 
+        {/* Reveal Button */}
+        {items.length > INITIAL_COUNT && (
+          <div className="mt-10 text-center">
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={() => setShowAll((prev) => !prev)}
+              className="font-semibold gap-2 border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground shadow-sm hover:shadow-md transition-all duration-300"
+            >
+              {showAll ? (
+                <>
+                  Show Less
+                  <ChevronUp className="h-4 w-4" />
+                </>
+              ) : (
+                <>
+                  View More Photos ({items.length - INITIAL_COUNT} more)
+                  <ChevronDown className="h-4 w-4" />
+                </>
+              )}
+            </Button>
+          </div>
+        )}
+
         {/* Note */}
         <div className="mt-12 text-center">
           <p className="text-muted-foreground">
@@ -108,6 +140,7 @@ const Gallery = () => {
               href="https://instagram.com/marveldrivingschool"
               target="_blank"
               rel="noopener noreferrer"
+              data-track="instagram"
               className="text-primary font-medium hover:underline"
             >
               Instagram @marveldrivingschool

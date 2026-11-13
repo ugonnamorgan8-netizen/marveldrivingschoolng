@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { MessageCircle, X, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,25 +30,20 @@ const Chatbot = () => {
     "Contact Info",
   ];
 
-  const handleSendMessage = () => {
-    if (!inputValue.trim()) return;
+  const nextId = useRef(2);
 
-    const userMessage: Message = {
-      id: messages.length + 1,
-      text: inputValue,
-      sender: "user",
-      timestamp: new Date(),
-    };
+  const sendMessage = (raw: string) => {
+    const text = raw.trim().slice(0, 500);
+    if (!text) return;
 
-    setMessages([...messages, userMessage]);
+    const userMessage: Message = { id: nextId.current++, text, sender: "user", timestamp: new Date() };
+    setMessages((prev) => [...prev, userMessage]);
     setInputValue("");
 
-    // Simulate bot response
     setTimeout(() => {
-      const botResponse = getBotResponse(inputValue.toLowerCase());
       const botMessage: Message = {
-        id: messages.length + 2,
-        text: botResponse,
+        id: nextId.current++,
+        text: getBotResponse(text.toLowerCase()),
         sender: "bot",
         timestamp: new Date(),
       };
@@ -56,9 +51,11 @@ const Chatbot = () => {
     }, 500);
   };
 
+  const handleSendMessage = () => sendMessage(inputValue);
+
   const getBotResponse = (input: string): string => {
     if (input.includes("price") || input.includes("package") || input.includes("cost")) {
-      return "Our packages:\n\n🎓 Beginner Course: ₦70,000\n• Complete training for first-time drivers\n• Includes theory & practical sessions\n\n🔄 Refresher Course: ₦45,000\n• Perfect for returning drivers\n• Focused skill building\n\nWould you like to book a lesson?";
+      return "Our courses:\n\n🎓 1 Month Beginners Course: ₦90,000\n• Learn BOTH Manual & Automatic from scratch\n• Full theory + practical, FRSC test prep\n\n🔄 2 Weeks Refresher Course: ₦60,000\n• For drivers with some experience\n• Choose Manual OR Automatic\n\n🏍️ Motorcycle Training: ₦55,000\n🛺 Tricycle (Keke) Training: ₦60,000\n🚚 Truck Driving: on request\n\nWould you like to book? Tap \"Book Now\" at the top, or use the Quick Enrollment form.";
     }
     
     if (input.includes("schedule") || input.includes("time") || input.includes("when")) {
@@ -66,11 +63,11 @@ const Chatbot = () => {
     }
     
     if (input.includes("book") || input.includes("register") || input.includes("enroll")) {
-      return "Great! To book your lesson, I'll need:\n\n1. Your full name\n2. Preferred day (Mon-Fri)\n3. Morning or Afternoon?\n4. Manual or Automatic?\n5. Package (Beginner/Refresher)\n6. Phone number\n\nPlease provide these details, or contact us directly:\n📱 WhatsApp: +234 816 597 3142";
+      return "Great! The fastest way to book is the \"Quick Enrollment\" form at the top of this page, or tap \"Book Now\" in the menu. We'll call you back within 24 hours.\n\nPrefer to chat? Message us directly:\n📱 WhatsApp: +234 816 597 3142";
     }
     
     if (input.includes("location") || input.includes("address") || input.includes("where")) {
-      return "📍 Our Locations:\n\n🏆 Training Ground (FRSC Approved):\nBCA Road by Secretariat, beside Vision Africa Radio Station\n\n📍 Other Offices:\n• Low-Cost Housing Estate\n• Ohobo Afara Junction\n• 88 Old Timber Road\n• Umudike beside Chaise World Hotel\n\nAll practical training happens at BCA Road!";
+      return "📍 Our Locations:\n\n🏢 Head Office: Old Timber Junction, Umuahia\n\n🏆 Training Ground (FRSC Approved):\nBCA Road Umuahia, opposite Vision Africa Radio\n\n📍 Other Offices:\n• Umudike, beside Chaise World Hotel\n• Post Office, Aba Road, Umuahia\n\nAll practical training happens at BCA Road!";
     }
     
     if (input.includes("contact") || input.includes("phone") || input.includes("whatsapp")) {
@@ -80,10 +77,7 @@ const Chatbot = () => {
     return "For specific details about that, please contact our CEO directly:\n\n📱 +234 816 597 3142 (WhatsApp)\n\nOr ask me about:\n• Packages & Pricing\n• Training Schedule\n• Locations\n• Booking a Lesson";
   };
 
-  const handleQuickReply = (reply: string) => {
-    setInputValue(reply);
-    handleSendMessage();
-  };
+  const handleQuickReply = (reply: string) => sendMessage(reply);
 
   return (
     <>
@@ -91,7 +85,8 @@ const Chatbot = () => {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="fixed bottom-6 right-6 z-50 w-14 h-14 md:w-16 md:h-16 bg-gradient-primary text-white rounded-full shadow-large hover:shadow-hover transition-all duration-300 flex items-center justify-center group"
-        aria-label="Open chat"
+        aria-label={isOpen ? "Close chat" : "Open chat"}
+        aria-expanded={isOpen}
       >
         {isOpen ? (
           <X className="w-6 h-6 md:w-7 md:h-7" />
@@ -161,12 +156,15 @@ const Chatbot = () => {
                 placeholder="Type your message..."
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+                onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
+                maxLength={500}
+                aria-label="Type your message"
                 className="flex-1"
               />
               <Button
                 onClick={handleSendMessage}
                 size="icon"
+                aria-label="Send message"
                 className="flex-shrink-0"
               >
                 <Send className="w-4 h-4" />

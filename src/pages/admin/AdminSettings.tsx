@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import type { Json } from "@/integrations/supabase/types";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -41,8 +42,8 @@ const AdminSettings = () => {
     setSaving(true);
     const { data: existing } = await supabase.from("site_settings").select("key").eq("key", "general").maybeSingle();
     const { error } = existing
-      ? await supabase.from("site_settings").update({ value: form as any }).eq("key", "general")
-      : await supabase.from("site_settings").insert({ key: "general", value: form as any });
+      ? await supabase.from("site_settings").update({ value: form as unknown as Json }).eq("key", "general")
+      : await supabase.from("site_settings").insert({ key: "general", value: form as unknown as Json });
     setSaving(false);
     if (error) toast({ title: "Save failed", description: error.message, variant: "destructive" });
     else toast({ title: "Settings saved" });

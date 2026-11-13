@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { IMAGE_ACCEPT, checkImage } from "@/lib/upload";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -32,15 +33,21 @@ const AdminGallery = () => {
   useEffect(() => { load(); }, []);
 
   const onFile = async (file: File) => {
+    const checked = checkImage(file);
+    if ("error" in checked) {
+      toast({ title: "Can't upload this file", description: checked.error, variant: "destructive" });
+      return;
+    }
     setUploading(true);
-    const ext = file.name.split(".").pop();
-    const path = `gallery/${crypto.randomUUID()}.${ext}`;
-    const { error: upErr } = await supabase.storage.from("gallery-images").upload(path, file);
+    const path = `gallery/${crypto.randomUUID()}.${checked.ext}`;
+    const { error: upErr } = await supabase.storage
+      .from("gallery-images")
+      .upload(path, file, { contentType: file.type, cacheControl: "31536000", upsert: false });
     if (upErr) { toast({ title: "Upload failed", description: upErr.message, variant: "destructive" }); setUploading(false); return; }
     const { data } = supabase.storage.from("gallery-images").getPublicUrl(path);
     const next = (images[images.length - 1]?.sort_order ?? 0) + 1;
     const { error } = await supabase.from("gallery_images").insert({
-      title: file.name, alt_text: file.name, image_url: data.publicUrl, sort_order: next,
+      title: file.name.replace(/\.[^.]+$/, "").slice(0, 100), alt_text: file.name.replace(/\.[^.]+$/, "").slice(0, 200), image_url: data.publicUrl, sort_order: next,
     });
     if (error) { toast({ title: "Save failed", description: error.message, variant: "destructive" }); setUploading(false); return; }
     toast({ title: "Image added" });
@@ -70,7 +77,7 @@ const AdminGallery = () => {
         <label className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg cursor-pointer text-sm font-semibold hover:opacity-90">
           <Upload className="w-4 h-4" />
           {uploading ? "Uploading..." : "Upload Image"}
-          <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])} />
+          <input type="file" accept={IMAGE_ACCEPT} className="hidden" onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])} />
         </label>
       </div>
 

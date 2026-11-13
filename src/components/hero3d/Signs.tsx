@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { Text, RoundedBox } from "@react-three/drei";
+import CanvasText from "./CanvasText";
 import * as THREE from "three";
 
 /**
@@ -46,9 +46,7 @@ const SignFace = ({ kind, speed }: { kind: SignKind; speed?: number }) => {
             <cylinderGeometry args={[0.45, 0.45, 0.06, 8]} />
             <meshStandardMaterial color="#dc2626" metalness={0.3} roughness={0.4} emissive="#dc2626" emissiveIntensity={0.15} />
           </mesh>
-          <Text position={[0, 0, 0.04]} fontSize={0.22} color="#ffffff" anchorX="center" anchorY="middle" outlineWidth={0.01} outlineColor="#000">
-            STOP
-          </Text>
+          <CanvasText position={[0, 0, 0.04]} fontSize={0.22} color="#ffffff" outlineWidth={0.01} outlineColor="#000">{"STOP"}</CanvasText>
         </group>
       );
     case "speed":
@@ -62,9 +60,7 @@ const SignFace = ({ kind, speed }: { kind: SignKind; speed?: number }) => {
             <ringGeometry args={[0.36, 0.45, 32]} />
             <meshStandardMaterial color="#dc2626" side={THREE.DoubleSide} />
           </mesh>
-          <Text position={[0, 0, 0.05]} fontSize={0.32} color="#111827" anchorX="center" anchorY="middle">
-            {String(speed ?? 50)}
-          </Text>
+          <CanvasText position={[0, 0, 0.05]} fontSize={0.32} color="#111827">{String(speed ?? 50)}</CanvasText>
         </group>
       );
     case "ped":
@@ -74,9 +70,7 @@ const SignFace = ({ kind, speed }: { kind: SignKind; speed?: number }) => {
             <boxGeometry args={[0.7, 0.7, 0.06]} />
             <meshStandardMaterial color="#facc15" emissive="#facc15" emissiveIntensity={0.2} />
           </mesh>
-          <Text position={[0, 0, 0.06]} fontSize={0.34} color="#111827" anchorX="center" anchorY="middle">
-            🚶
-          </Text>
+          <CanvasText position={[0, 0, 0.06]} fontSize={0.34} color="#111827">{"🚶"}</CanvasText>
         </group>
       );
     case "left":
@@ -86,9 +80,7 @@ const SignFace = ({ kind, speed }: { kind: SignKind; speed?: number }) => {
             <boxGeometry args={[0.8, 0.55, 0.06]} />
             <meshStandardMaterial color="#1d4ed8" emissive="#1d4ed8" emissiveIntensity={0.2} />
           </mesh>
-          <Text position={[0, 0, 0.04]} fontSize={0.4} color="#ffffff" anchorX="center" anchorY="middle">
-            ←
-          </Text>
+          <CanvasText position={[0, 0, 0.04]} fontSize={0.4} color="#ffffff">{"←"}</CanvasText>
         </group>
       );
     case "right":
@@ -98,9 +90,7 @@ const SignFace = ({ kind, speed }: { kind: SignKind; speed?: number }) => {
             <boxGeometry args={[0.8, 0.55, 0.06]} />
             <meshStandardMaterial color="#1d4ed8" emissive="#1d4ed8" emissiveIntensity={0.2} />
           </mesh>
-          <Text position={[0, 0, 0.04]} fontSize={0.4} color="#ffffff" anchorX="center" anchorY="middle">
-            →
-          </Text>
+          <CanvasText position={[0, 0, 0.04]} fontSize={0.4} color="#ffffff">{"→"}</CanvasText>
         </group>
       );
     case "roundabout":
@@ -110,9 +100,7 @@ const SignFace = ({ kind, speed }: { kind: SignKind; speed?: number }) => {
             <cylinderGeometry args={[0.45, 0.45, 0.06, 32]} />
             <meshStandardMaterial color="#1d4ed8" emissive="#1d4ed8" emissiveIntensity={0.2} />
           </mesh>
-          <Text position={[0, 0, 0.04]} fontSize={0.42} color="#ffffff" anchorX="center" anchorY="middle">
-            ↻
-          </Text>
+          <CanvasText position={[0, 0, 0.04]} fontSize={0.42} color="#ffffff">{"↻"}</CanvasText>
         </group>
       );
   }

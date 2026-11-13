@@ -1,10 +1,14 @@
 import { Phone, Instagram, Facebook, MapPin, Mail } from "lucide-react";
+import { useLocation } from "react-router-dom";
 import { useSiteSettings } from "@/hooks/use-site-settings";
+import marvelLogo from "@/assets/marvel-logo.jpg";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
   const { settings } = useSiteSettings();
   const waNumber = settings.phone.replace(/[^\d]/g, "");
+  const { pathname } = useLocation();
+  const base = pathname === "/" ? "" : "/";
 
   return (
     <footer className="bg-foreground text-background py-12 md:py-16">
@@ -13,13 +17,16 @@ const Footer = () => {
           {/* About */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 bg-gradient-primary rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">M</span>
-              </div>
+              <img
+                src={marvelLogo}
+                alt="Marvel Driving School logo"
+                loading="lazy"
+                className="w-10 h-10 rounded-lg object-cover bg-white"
+              />
               <span className="text-xl font-bold">Marvel</span>
             </div>
             <p className="text-sm text-background/70 mb-4">
-              Umuahia's premier FRSC-approved driving school, training confident and safe drivers since 2009.
+              Umuahia's premier FRSC-approved driving school, training confident and safe drivers for over 8 years.
             </p>
             <p className="text-xs text-background/60">RC 2564711</p>
           </div>
@@ -28,10 +35,10 @@ const Footer = () => {
           <div>
             <h3 className="font-bold mb-4">Quick Links</h3>
             <ul className="space-y-2 text-sm">
-              <li><a href="#about" className="text-background/70 hover:text-background transition-colors">About Us</a></li>
-              <li><a href="#services" className="text-background/70 hover:text-background transition-colors">Services</a></li>
-              <li><a href="#pricing" className="text-background/70 hover:text-background transition-colors">Pricing</a></li>
-              <li><a href="#testimonials" className="text-background/70 hover:text-background transition-colors">Testimonials</a></li>
+              <li><a href={`${base}#about`} className="text-background/70 hover:text-background transition-colors">About Us</a></li>
+              <li><a href={`${base}#services`} className="text-background/70 hover:text-background transition-colors">Services</a></li>
+              <li><a href={`${base}#gallery`} className="text-background/70 hover:text-background transition-colors">Gallery</a></li>
+              <li><a href={`${base}#testimonials`} className="text-background/70 hover:text-background transition-colors">Testimonials</a></li>
             </ul>
           </div>
 
@@ -42,7 +49,10 @@ const Footer = () => {
               <li className="flex items-start gap-2">
                 <Phone className="w-4 h-4 mt-0.5 flex-shrink-0 text-background/70" />
                 <a
-                  href={waNumber ? `https://wa.me/${waNumber}` : "#"}
+                  href={waNumber ? `https://wa.me/${waNumber}` : `tel:${settings.phone}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-track="whatsapp_footer"
                   className="text-background/70 hover:text-background transition-colors"
                 >
                   {settings.phone}
@@ -52,6 +62,7 @@ const Footer = () => {
                 <Mail className="w-4 h-4 mt-0.5 flex-shrink-0 text-background/70" />
                 <a
                   href={`mailto:${settings.email}`}
+                  data-track="email_footer"
                   className="text-background/70 hover:text-background transition-colors break-all"
                 >
                   {settings.email}
@@ -59,7 +70,7 @@ const Footer = () => {
               </li>
               <li className="flex items-start gap-2">
                 <Instagram className="w-4 h-4 mt-0.5 flex-shrink-0 text-background/70" />
-                <a href="https://instagram.com/marveldrivingschool" className="text-background/70 hover:text-background transition-colors">
+                <a href="https://instagram.com/marveldrivingschool" target="_blank" rel="noopener noreferrer" data-track="instagram_footer" className="text-background/70 hover:text-background transition-colors">
                   @marveldrivingschool
                 </a>
               </li>
@@ -93,8 +104,8 @@ const Footer = () => {
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-background/60">
             <p>© {currentYear} Marvel Driving School. All rights reserved.</p>
             <div className="flex gap-6">
-              <a href="#" className="hover:text-background transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-background transition-colors">Terms of Service</a>
+              <a href={`${base}#policies`} className="hover:text-background transition-colors">School Policies</a>
+              <a href={`${base}#faq`} className="hover:text-background transition-colors">FAQ</a>
             </div>
           </div>
         </div>

@@ -62,39 +62,93 @@ export type Database = {
       enrollments: {
         Row: {
           admin_notes: string | null
+          branch: string | null
           created_at: string
-          email: string
+          email: string | null
           full_name: string
           id: string
+          ip_hash: string | null
           message: string | null
           phone: string
+          preferred_time: string | null
           service: string | null
+          source: string | null
           status: Database["public"]["Enums"]["enrollment_status"]
           updated_at: string
+          vehicle: string | null
         }
         Insert: {
           admin_notes?: string | null
+          branch?: string | null
           created_at?: string
-          email: string
+          email?: string | null
           full_name: string
           id?: string
+          ip_hash?: string | null
           message?: string | null
           phone: string
+          preferred_time?: string | null
           service?: string | null
+          source?: string | null
           status?: Database["public"]["Enums"]["enrollment_status"]
           updated_at?: string
+          vehicle?: string | null
         }
         Update: {
           admin_notes?: string | null
+          branch?: string | null
           created_at?: string
-          email?: string
+          email?: string | null
           full_name?: string
           id?: string
+          ip_hash?: string | null
           message?: string | null
           phone?: string
+          preferred_time?: string | null
           service?: string | null
+          source?: string | null
           status?: Database["public"]["Enums"]["enrollment_status"]
           updated_at?: string
+          vehicle?: string | null
+        }
+        Relationships: []
+      }
+      page_events: {
+        Row: {
+          country: string | null
+          created_at: string
+          device: string | null
+          event_type: string
+          id: number
+          label: string | null
+          path: string
+          referrer: string | null
+          session_id: string | null
+          visitor_hash: string | null
+        }
+        Insert: {
+          country?: string | null
+          created_at?: string
+          device?: string | null
+          event_type: string
+          id?: never
+          label?: string | null
+          path: string
+          referrer?: string | null
+          session_id?: string | null
+          visitor_hash?: string | null
+        }
+        Update: {
+          country?: string | null
+          created_at?: string
+          device?: string | null
+          event_type?: string
+          id?: never
+          label?: string | null
+          path?: string
+          referrer?: string | null
+          session_id?: string | null
+          visitor_hash?: string | null
         }
         Relationships: []
       }
@@ -151,33 +205,39 @@ export type Database = {
           content: string
           created_at: string
           id: string
+          ip_hash: string | null
           name: string
           published: boolean
           rating: number
           role: string
           sort_order: number
+          source: string | null
           updated_at: string
         }
         Insert: {
           content: string
           created_at?: string
           id?: string
+          ip_hash?: string | null
           name: string
           published?: boolean
           rating?: number
           role?: string
           sort_order?: number
+          source?: string | null
           updated_at?: string
         }
         Update: {
           content?: string
           created_at?: string
           id?: string
+          ip_hash?: string | null
           name?: string
           published?: boolean
           rating?: number
           role?: string
           sort_order?: number
+          source?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -208,6 +268,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_analytics: {
+        Args: { p_days?: number }
+        Returns: Json
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

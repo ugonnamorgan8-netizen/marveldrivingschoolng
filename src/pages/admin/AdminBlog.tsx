@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { IMAGE_ACCEPT, checkImage } from "@/lib/upload";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -77,10 +78,16 @@ const AdminBlog = () => {
   };
 
   const handleImage = async (file: File) => {
+    const checked = checkImage(file);
+    if ("error" in checked) {
+      toast({ title: "Can't upload this file", description: checked.error, variant: "destructive" });
+      return;
+    }
     setUploading(true);
-    const ext = file.name.split(".").pop();
-    const path = `posts/${crypto.randomUUID()}.${ext}`;
-    const { error } = await supabase.storage.from("blog-images").upload(path, file);
+    const path = `posts/${crypto.randomUUID()}.${checked.ext}`;
+    const { error } = await supabase.storage
+      .from("blog-images")
+      .upload(path, file, { contentType: file.type, cacheControl: "31536000", upsert: false });
     if (error) {
       toast({ title: "Upload failed", description: error.message, variant: "destructive" });
       setUploading(false); return;
@@ -186,7 +193,7 @@ const AdminBlog = () => {
                 <label className="inline-flex items-center gap-2 px-3 py-2 border rounded-md cursor-pointer text-sm hover:bg-accent">
                   <Upload className="w-4 h-4" />
                   {uploading ? "Uploading..." : "Choose image"}
-                  <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleImage(e.target.files[0])} />
+                  <input type="file" accept={IMAGE_ACCEPT} className="hidden" onChange={(e) => e.target.files?.[0] && handleImage(e.target.files[0])} />
                 </label>
               </div>
             </div>

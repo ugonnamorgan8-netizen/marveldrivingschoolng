@@ -1,6 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -161,6 +158,13 @@ All colors MUST be HSL.
 
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem; /* keep anchored sections clear of the fixed nav */
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -196,5 +200,44 @@ All colors MUST be HSL.
   }
   100% {
     transform: scale(1.05) translate3d(0, 0, 0);
+  }
+}
+
+/* 1 → 2 → 3 column card grid whose incomplete last row is centred */
+@layer components {
+  .grid-3-centered {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  @media (min-width: 640px) {
+    .grid-3-centered {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .grid-3-centered > * {
+      grid-column: span 2;
+    }
+    .grid-3-centered > *:last-child:nth-child(2n + 1) {
+      grid-column: 2 / span 2;
+    }
+  }
+  @media (min-width: 768px) {
+    .grid-3-centered {
+      gap: 2rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    .grid-3-centered {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+    .grid-3-centered > *:last-child:nth-child(2n + 1) {
+      grid-column: span 2;
+    }
+    .grid-3-centered > *:last-child:nth-child(3n + 1) {
+      grid-column: 3 / span 2;
+    }
+    .grid-3-centered > *:nth-last-child(2):nth-child(3n + 1) {
+      grid-column: 2 / span 2;
+    }
   }
 }

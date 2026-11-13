@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { useBooking } from "./BookingDialog";
 const CTABanner = () => {
+  const { openBooking } = useBooking();
   return <section className="py-16 md:py-24 bg-gradient-primary relative overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
@@ -19,15 +21,14 @@ const CTABanner = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button variant="secondary" size="lg" className="w-full sm:w-auto bg-white text-primary hover:bg-white/90 shadow-lg group" asChild>
-              <a href="#contact">
-                Book Your First Lesson
-                <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-              </a>
+            <Button variant="secondary" size="lg" className="w-full sm:w-auto bg-white text-primary hover:bg-white/90 shadow-lg group"
+              onClick={() => openBooking()} data-track="cta_book_first_lesson">
+              Book Your First Lesson
+              <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
             
             <Button variant="outline" size="lg" className="w-full sm:w-auto border-2 border-white text-white bg-transparent hover:bg-white hover:text-primary" asChild>
-              <a href="https://wa.me/2348165973142" target="_blank" rel="noopener noreferrer">
+              <a href="https://wa.me/2348165973142" target="_blank" rel="noopener noreferrer" data-track="whatsapp_cta_banner">
                 Chat on WhatsApp
               </a>
             </Button>
@@ -48,7 +49,7 @@ const CTABanner = () => {
               <div className="text-sm text-white/80">Success Rate</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl md:text-3xl font-bold text-white mb-1">7+</div>
+              <div className="text-2xl md:text-3xl font-bold text-white mb-1">8+</div>
               <div className="text-sm text-white/80">Years Experience</div>
             </div>
           </div>

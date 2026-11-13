@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState, Suspense, useMemo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { ContactShadows, Environment, Sparkles, Cloud } from "@react-three/drei";
+import { ContactShadows, Environment, Sparkles, Cloud, Clouds } from "@react-three/drei";
 import * as THREE from "three";
 import Car from "./hero3d/Car";
 import Road from "./hero3d/Road";
@@ -92,12 +92,15 @@ const Scene = ({ progress, speed }: SceneProps) => {
 
       {/* Distant clouds */}
       <Suspense fallback={null}>
-        <group position={[-10, 8, -30]}>
-          <Cloud seed={1} segments={20} bounds={[10, 1.5, 1]} volume={4} color="#ffffff" opacity={0.55} />
-        </group>
-        <group position={[12, 9, -45]}>
-          <Cloud seed={3} segments={20} bounds={[10, 1.5, 1]} volume={4} color="#ffffff" opacity={0.5} />
-        </group>
+        {/* Self-hosted texture: no runtime requests to third-party CDNs */}
+        <Clouds texture="/3d/cloud.png" material={THREE.MeshLambertMaterial}>
+          <group position={[-10, 8, -30]}>
+            <Cloud seed={1} segments={20} bounds={[10, 1.5, 1]} volume={4} color="#ffffff" opacity={0.55} />
+          </group>
+          <group position={[12, 9, -45]}>
+            <Cloud seed={3} segments={20} bounds={[10, 1.5, 1]} volume={4} color="#ffffff" opacity={0.5} />
+          </group>
+        </Clouds>
       </Suspense>
 
       {/* Dust particles around the car */}
@@ -111,7 +114,7 @@ const Scene = ({ progress, speed }: SceneProps) => {
       <ContactShadows position={[0, 0.02, 0]} opacity={0.55} scale={10} blur={2.4} far={5} />
 
       <Suspense fallback={null}>
-        <Environment preset="sunset" />
+        <Environment files="/3d/venice_sunset_1k.hdr" />
       </Suspense>
     </>
   );
@@ -127,8 +130,22 @@ const HeroScene3D = ({ containerRef }: Props) => {
   const lastP = useRef(0);
   const lastT = useRef(performance.now());
   const speedRef = useRef(0);
+  const [inView, setInView] = useState(false);
+
+  // Only animate while the section is on (or near) screen.
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") {
+      setInView(true);
+      return;
+    }
+    const io = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), { rootMargin: "200px" });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [containerRef]);
 
   useEffect(() => {
+    if (!inView) return;
     const update = () => {
       // Drive animation from overall page scroll, not section visibility
       const doc = document.documentElement;
@@ -167,6 +184,13 @@ const HeroScene3D = ({ containerRef }: Props) => {
     window.addEventListener("resize", update);
     // Decay speed when not scrolling
     const decay = setInterval(() => {
+      if (Math.abs(speedRef.current) < 0.0005) {
+        if (speedRef.current !== 0) {
+          speedRef.current = 0;
+          setSpeed(0);
+        }
+        return;
+      }
       speedRef.current *= 0.85;
       setSpeed(speedRef.current);
     }, 80);
@@ -175,13 +199,14 @@ const HeroScene3D = ({ containerRef }: Props) => {
       window.removeEventListener("resize", update);
       clearInterval(decay);
     };
-  }, [containerRef]);
+  }, [containerRef, inView]);
 
   return (
     <div className="absolute inset-0 pointer-events-none">
       <Canvas
         shadows
-        dpr={[1, 2]}
+        dpr={[1, 1.5]}
+        frameloop={inView ? "always" : "never"}
         camera={{ position: [4.5, 2.6, 6.2], fov: 38 }}
         gl={{
           antialias: true,

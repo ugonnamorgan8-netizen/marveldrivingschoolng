@@ -38,7 +38,7 @@ const About = () => {
         </div>
 
         {/* Features Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+        <div className="grid-3-centered max-w-6xl mx-auto">
           {features.map((feature) => (
             <div
               key={feature.title}

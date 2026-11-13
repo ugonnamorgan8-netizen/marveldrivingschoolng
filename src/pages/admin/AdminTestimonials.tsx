@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter
 } from "@/components/ui/dialog";
-import { Loader2, Plus, Pencil, Trash2, Star } from "lucide-react";
+import { Loader2, Plus, Pencil, Trash2, Star, Check } from "lucide-react";
 
 type Testimonial = {
   id: string;
@@ -19,6 +19,7 @@ type Testimonial = {
   rating: number;
   sort_order: number;
   published: boolean;
+  source?: string | null;
 };
 
 const empty: Omit<Testimonial, "id"> = {
@@ -43,7 +44,8 @@ const AdminTestimonials = () => {
     setLoading(true);
     const { data, error } = await supabase
       .from("testimonials")
-      .select("*")
+      .select("id, name, role, content, rating, sort_order, published, source")
+      .order("published", { ascending: true })
       .order("sort_order", { ascending: true });
     if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
     else setItems((data ?? []) as Testimonial[]);
@@ -74,7 +76,8 @@ const AdminTestimonials = () => {
     }
     setSaving(true);
     const payload = {
-      ...form,
+      sort_order: form.sort_order,
+      published: form.published,
       name: form.name.trim(),
       role: form.role.trim(),
       content: form.content.trim(),
@@ -93,6 +96,18 @@ const AdminTestimonials = () => {
     load();
   };
 
+  const approve = async (t: Testimonial) => {
+    const { error } = await supabase.from("testimonials").update({ published: true, sort_order: 100 }).eq("id", t.id);
+    if (error) {
+      toast({ title: "Approve failed", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Review published" });
+    load();
+  };
+
+  const pendingCount = items.filter((t) => !t.published && t.source === "website").length;
+
   const remove = async (id: string) => {
     if (!confirm("Delete this testimonial?")) return;
     const { error } = await supabase.from("testimonials").delete().eq("id", id);
@@ -108,7 +123,9 @@ const AdminTestimonials = () => {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl md:text-3xl font-bold">Testimonials</h1>
-          <p className="text-sm text-muted-foreground">{items.length} testimonials</p>
+          <p className="text-sm text-muted-foreground">
+            {items.length} testimonials{pendingCount > 0 && ` · ${pendingCount} awaiting approval`}
+          </p>
         </div>
         <Button onClick={openNew}><Plus className="w-4 h-4 mr-2" />New Testimonial</Button>
       </div>
@@ -124,17 +141,25 @@ const AdminTestimonials = () => {
               <CardContent className="p-5">
                 <div className="flex items-center gap-2 mb-2">
                   <div className="flex gap-0.5">
-                    {[...Array(t.rating)].map((_, i) => (
+                    {Array.from({ length: Math.min(5, Math.max(0, t.rating)) }).map((_, i) => (
                       <Star key={i} className="w-3.5 h-3.5 fill-primary text-primary" />
                     ))}
                   </div>
-                  {!t.published && <Badge variant="outline">Hidden</Badge>}
+                  {!t.published && t.source === "website" && <Badge className="bg-amber-500 text-white">Awaiting approval</Badge>}
+                  {!t.published && t.source !== "website" && <Badge variant="outline">Hidden</Badge>}
+                  {t.source === "facebook" && <Badge variant="outline">Facebook</Badge>}
+                  {t.source === "website" && t.published && <Badge variant="outline">Website</Badge>}
                   <span className="text-xs text-muted-foreground ml-auto">order: {t.sort_order}</span>
                 </div>
                 <p className="text-sm text-muted-foreground line-clamp-3 mb-3">"{t.content}"</p>
                 <div className="text-sm font-bold">{t.name}</div>
                 {t.role && <div className="text-xs text-muted-foreground mb-3">{t.role}</div>}
                 <div className="flex gap-2 mt-3">
+                  {!t.published && (
+                    <Button size="sm" onClick={() => approve(t)}>
+                      <Check className="w-3.5 h-3.5 mr-1" />Approve
+                    </Button>
+                  )}
                   <Button size="sm" variant="outline" onClick={() => openEdit(t)}>
                     <Pencil className="w-3.5 h-3.5 mr-1" />Edit
                   </Button>

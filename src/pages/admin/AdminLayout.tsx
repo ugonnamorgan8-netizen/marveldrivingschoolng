@@ -1,12 +1,14 @@
 import { useEffect } from "react";
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { Inbox, FileText, Image as ImageIcon, MessageSquareQuote, Settings, LogOut, Loader2 } from "lucide-react";
+import { Inbox, BarChart3, FileText, Image as ImageIcon, MessageSquareQuote, Settings, LogOut, Loader2 } from "lucide-react";
+import { useNoIndex } from "@/hooks/use-no-index";
 import { useAdminAuth } from "@/hooks/use-admin-auth";
 import { Button } from "@/components/ui/button";
 import marvelLogo from "@/assets/marvel-logo.jpg";
 
 const navItems = [
-  { to: "/admin", label: "Enrollments", icon: Inbox, end: true },
+  { to: "/admin", label: "Enquiries", icon: Inbox, end: true },
+  { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
   { to: "/admin/blog", label: "Blog Posts", icon: FileText },
   { to: "/admin/gallery", label: "Gallery", icon: ImageIcon },
   { to: "/admin/testimonials", label: "Testimonials", icon: MessageSquareQuote },
@@ -14,6 +16,7 @@ const navItems = [
 ];
 
 const AdminLayout = () => {
+  useNoIndex();
   const { user, isAdmin, loading, signOut } = useAdminAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -86,7 +89,7 @@ const AdminLayout = () => {
           />
           <span>Marvel Admin</span>
         </Link>
-        <Button variant="ghost" size="sm" onClick={signOut}>
+        <Button variant="ghost" size="sm" onClick={signOut} aria-label="Sign out">
           <LogOut className="w-4 h-4" />
         </Button>
       </div>
@@ -96,14 +99,14 @@ const AdminLayout = () => {
           <Outlet />
         </div>
         {/* Mobile bottom nav */}
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border grid grid-cols-5 z-40">
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border grid grid-cols-6 z-40">
           {navItems.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
               end={item.end}
               className={({ isActive }) =>
-                `flex flex-col items-center justify-center py-2.5 text-xs gap-1 ${
+                `flex flex-col items-center justify-center py-2.5 text-[10px] gap-1 ${
                   isActive ? "text-primary" : "text-muted-foreground"
                 }`
               }

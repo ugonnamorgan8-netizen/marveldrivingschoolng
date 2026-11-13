@@ -5,6 +5,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import Chatbot from "@/components/Chatbot";
 import { Button } from "@/components/ui/button";
+import { useBooking } from "@/components/BookingDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { blogPosts as fallbackPosts, getPostBySlug } from "@/data/blogPosts";
 
@@ -49,6 +50,7 @@ const fromDb = (p: DbPost): DisplayPost => ({
 });
 
 const BlogPost = () => {
+  const { openBooking } = useBooking();
   const { slug } = useParams<{ slug: string }>();
   const [post, setPost] = useState<DisplayPost | null | undefined>(undefined);
   const [related, setRelated] = useState<DisplayPost[]>([]);
@@ -211,8 +213,8 @@ const BlogPost = () => {
             <p className="text-muted-foreground mb-5">
               Join Marvel Driving School and learn from FRSC-approved instructors in Umuahia.
             </p>
-            <Button size="lg" asChild>
-              <Link to="/#contact">Book your training</Link>
+            <Button size="lg" onClick={() => openBooking()} data-track="blog_book_training">
+              Book your training
             </Button>
           </div>
         </article>

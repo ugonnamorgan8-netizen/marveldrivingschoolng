@@ -23,8 +23,8 @@ const faqs = [
     a: "Our office and main training ground are at BCA Road, by the Secretariat in Umuahia. We also use approved practical grounds within the city.",
   },
   {
-    q: "Can I reschedule or get a refund if I miss a class?",
-    a: "Rescheduling is allowed with reasonable prior notice. Refunds follow our published policy — please reach out via WhatsApp on +234 816 597 3142 to discuss your specific case.",
+    q: "Can I get a refund or reschedule if I miss a class?",
+    a: "We operate a strict no-refund policy: all payments are final and fees are non-refundable once training has commenced. You can, however, reschedule your sessions with advance notice to your instructor — message us on WhatsApp on +234 816 597 3142 to arrange a new time.",
   },
   {
     q: "Do you train people who have never driven before?",
@@ -74,6 +74,9 @@ const FAQ = () => {
             Still have questions?{" "}
             <a
               href="https://wa.me/2348165973142"
+              target="_blank"
+              rel="noopener noreferrer"
+              data-track="whatsapp_faq"
               className="text-primary font-semibold hover:underline"
             >
               Chat with us on WhatsApp

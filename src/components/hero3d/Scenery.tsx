@@ -66,9 +66,14 @@ const Building = ({ position, w, h, d, color }: { position: [number, number, num
   </group>
 );
 
+type SceneryItem =
+  | { type: "tree"; props: React.ComponentProps<typeof Tree> }
+  | { type: "lamp"; props: React.ComponentProps<typeof Lamp> }
+  | { type: "building"; props: React.ComponentProps<typeof Building> };
+
 const Scenery = ({ length = 200 }: { length?: number }) => {
   const items = useMemo(() => {
-    const list: { type: "tree" | "lamp" | "building"; props: any }[] = [];
+    const list: SceneryItem[] = [];
     const palette = ["#fef3c7", "#fde68a", "#fbcfe8", "#bfdbfe", "#fecaca", "#d9f99d"];
     let z = -4;
     let seed = 1;

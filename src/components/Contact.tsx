@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Phone, Instagram, Facebook, MapPin, Clock, Send, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { COURSES, checkEnquiry, submitEnquiry } from "@/lib/api";
 import { useSiteSettings } from "@/hooks/use-site-settings";
 
 const Contact = () => {
@@ -15,26 +15,29 @@ const Contact = () => {
     email: "",
     phone: "",
     message: "",
+    service: "",
+    website: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const startedAt = useRef(Date.now());
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const payload = { ...formData, source: "contact" as const, elapsedMs: Date.now() - startedAt.current };
+    const problem = checkEnquiry(payload);
+    if (problem) {
+      toast({ title: "Please check the form", description: problem, variant: "destructive" });
+      return;
+    }
+
     setIsSubmitting(true);
-
-    const { error } = await supabase.from("enrollments").insert({
-      full_name: formData.name.trim(),
-      email: formData.email.trim(),
-      phone: formData.phone.trim(),
-      message: formData.message.trim() || null,
-    });
-
+    const result = await submitEnquiry(payload);
     setIsSubmitting(false);
 
-    if (error) {
+    if (!result.ok) {
       toast({
         title: "Could not send",
-        description: error.message,
+        description: result.error,
         variant: "destructive",
       });
       return;
@@ -44,7 +47,8 @@ const Contact = () => {
       title: "Message Sent!",
       description: "Thanks! We'll reach out shortly via WhatsApp or email.",
     });
-    setFormData({ name: "", email: "", phone: "", message: "" });
+    setFormData({ name: "", email: "", phone: "", message: "", service: "", website: "" });
+    startedAt.current = Date.now();
   };
 
   const waNumber = settings.phone.replace(/[^\d]/g, "");
@@ -119,9 +123,9 @@ const Contact = () => {
                     {info.link ? (
                       <a
                         href={info.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-primary hover:underline"
+                        {...(info.link.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                        data-track={`contact_${info.title.split(" ")[0].toLowerCase()}`}
+                        className="text-primary hover:underline break-all"
                       >
                         {info.content}
                       </a>
@@ -138,7 +142,20 @@ const Contact = () => {
           <div className="bg-card p-6 md:p-8 rounded-xl border border-border shadow-card">
             <h3 className="text-2xl font-bold mb-6">Send Us a Message</h3>
             
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} noValidate className="space-y-4 relative">
+              {/* Honeypot: hidden from people, bots fill it in */}
+              <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+                <label>
+                  Website
+                  <input
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={formData.website}
+                    onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                  />
+                </label>
+              </div>
+
               <div>
                 <label htmlFor="name" className="block text-sm font-medium mb-2">
                   Full Name
@@ -146,6 +163,8 @@ const Contact = () => {
                 <Input
                   id="name"
                   type="text"
+                  autoComplete="name"
+                  maxLength={100}
                   placeholder="Enter your name"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -161,6 +180,8 @@ const Contact = () => {
                 <Input
                   id="email"
                   type="email"
+                  autoComplete="email"
+                  maxLength={254}
                   placeholder="you@example.com"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -176,6 +197,8 @@ const Contact = () => {
                 <Input
                   id="phone"
                   type="tel"
+                  autoComplete="tel"
+                  maxLength={30}
                   placeholder="+234 XXX XXX XXXX"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
@@ -185,15 +208,34 @@ const Contact = () => {
               </div>
 
               <div>
+                <label htmlFor="service" className="block text-sm font-medium mb-2">
+                  Course <span className="text-muted-foreground font-normal">(optional)</span>
+                </label>
+                <select
+                  id="service"
+                  value={formData.service}
+                  onChange={(e) => setFormData({ ...formData, service: e.target.value })}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                >
+                  <option value="">Choose a course</option>
+                  {COURSES.map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
                 <label htmlFor="message" className="block text-sm font-medium mb-2">
-                  Message
+                  Message <span className="text-muted-foreground font-normal">(optional)</span>
                 </label>
                 <Textarea
                   id="message"
                   placeholder="Tell us how we can help you..."
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  required
+                  maxLength={2000}
                   className="w-full min-h-[120px]"
                 />
               </div>
@@ -204,6 +246,7 @@ const Contact = () => {
                 size="lg"
                 className="w-full"
                 disabled={isSubmitting}
+                data-track="contact_form_submit"
               >
                 {isSubmitting ? "Sending..." : "Send Message"}
                 <Send className="ml-2 w-4 h-4" />
