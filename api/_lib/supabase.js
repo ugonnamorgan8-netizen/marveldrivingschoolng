@@ -1,9 +1,11 @@
 // Minimal Supabase REST helpers for the server functions (service role, server-only).
 import { supabaseConfig } from "./http.js";
 
+// Legacy service_role keys are JWTs ("eyJ…") and also go in Authorization.
+// New-style secret keys ("sb_secret_…") must only be sent in the apikey header.
 const headers = (key, extra = {}) => ({
   apikey: key,
-  Authorization: `Bearer ${key}`,
+  ...(key.startsWith("eyJ") ? { Authorization: `Bearer ${key}` } : {}),
   "Content-Type": "application/json",
   ...extra,
 });

@@ -10,7 +10,7 @@ export const env = (name, fallback) => {
 };
 
 // Public project URL (not a secret). Override with SUPABASE_URL if the project ever moves.
-const PUBLIC_SUPABASE_URL = "https://koqthbdxxxxbyttpboxl.supabase.co";
+const PUBLIC_SUPABASE_URL = "https://swtfnidnohbifsoklhns.supabase.co";
 
 export const supabaseConfig = () => ({
   url: env("SUPABASE_URL", env("VITE_SUPABASE_URL", PUBLIC_SUPABASE_URL)),

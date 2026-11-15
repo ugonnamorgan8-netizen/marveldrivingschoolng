@@ -1,6 +1,7 @@
 // POST /api/track — privacy-friendly first-party analytics (page views + CTA clicks).
 // No cookies, no raw IPs: visitors are counted with a salted hash that rotates daily.
 import { burstLimited, cleanText, clientIp, guard, hashValue, readJson, send, supabaseConfig } from "./_lib/http.js";
+import { insertRow } from "./_lib/supabase.js";
 
 const BOT_RE = /bot|crawl|spider|slurp|preview|headless|lighthouse|pingdom|monitor|curl|wget|python|axios|node-fetch/i;
 
@@ -65,16 +66,7 @@ export default async function handler(req, res) {
   };
 
   try {
-    await fetch(`${url}/rest/v1/page_events`, {
-      method: "POST",
-      headers: {
-        apikey: serviceKey,
-        Authorization: `Bearer ${serviceKey}`,
-        "Content-Type": "application/json",
-        Prefer: "return=minimal",
-      },
-      body: JSON.stringify(row),
-    });
+    await insertRow("page_events", row);
   } catch {
     /* ignore */
   }
