@@ -12,8 +12,11 @@ export const env = (name, fallback) => {
 // Public project URL (not a secret). Override with SUPABASE_URL if the project ever moves.
 const PUBLIC_SUPABASE_URL = "https://swtfnidnohbifsoklhns.supabase.co";
 
+// Keys never contain whitespace; strip any that sneaks in when pasting (line breaks, spaces).
+const cleanKey = (k) => (typeof k === "string" ? k.replace(/\s+/g, "") : k);
+
 export const supabaseConfig = () => ({
-  url: env("SUPABASE_URL", env("VITE_SUPABASE_URL", PUBLIC_SUPABASE_URL)),
+  url: env("SUPABASE_URL", env("VITE_SUPABASE_URL", PUBLIC_SUPABASE_URL)).trim(),
   serviceKey: env("SUPABASE_SERVICE_ROLE_KEY"),
 });
 

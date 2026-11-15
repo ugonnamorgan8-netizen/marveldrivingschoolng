@@ -41,12 +41,13 @@ export const insertRow = async (table, row, legacyRow) => {
 };
 
 /** Count rows matching a PostgREST filter query string (e.g. "ip_hash=eq.x&created_at=gte.y"). */
-export const countRows = async (table, filter) => {
+export const countRows = async (table, filter, { raw = false } = {}) => {
   const { url, serviceKey } = supabaseConfig();
   const r = await fetch(`${url}/rest/v1/${table}?select=id&${filter}`, {
     method: "HEAD",
     headers: headers(serviceKey, { Prefer: "count=exact" }),
   });
+  if (raw) return { ok: r.ok, status: r.status };
   if (!r.ok) return 0; // e.g. column not migrated yet — the DB trigger still protects
   const range = r.headers.get("content-range") || "*/0";
   return Number(range.split("/")[1]) || 0;
