@@ -17,7 +17,7 @@ const cleanKey = (k) => (typeof k === "string" ? k.replace(/\s+/g, "") : k);
 
 export const supabaseConfig = () => ({
   url: env("SUPABASE_URL", env("VITE_SUPABASE_URL", PUBLIC_SUPABASE_URL)).trim(),
-  serviceKey: env("SUPABASE_SERVICE_ROLE_KEY"),
+  serviceKey: cleanKey(env("SUPABASE_SERVICE_ROLE_KEY")),
 });
 
 /** Send a JSON response with safe defaults. */

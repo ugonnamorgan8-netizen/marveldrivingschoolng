@@ -72,7 +72,6 @@ const Index = () => {
       <Navigation />
       <main>
         <Hero />
-        <DeferredCarShowcase />
         <About />
         <Services />
         <TrainingSchedule />

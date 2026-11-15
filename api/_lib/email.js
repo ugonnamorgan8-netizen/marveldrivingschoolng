@@ -6,7 +6,7 @@ import { env, escapeHtml } from "./http.js";
  * Returns { skipped } when email isn't configured, { ok } otherwise.
  */
 export const notify = async ({ subject, heading, rows, replyTo, footer }) => {
-  const apiKey = env("RESEND_API_KEY");
+  const apiKey = (env("RESEND_API_KEY") || "").replace(/\s+/g, "");
   const to = env("NOTIFY_EMAIL_TO");
   if (!apiKey || !to) return { skipped: true };
 
