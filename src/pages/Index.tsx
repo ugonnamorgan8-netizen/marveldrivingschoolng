@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import Hero from "@/components/Hero";
@@ -15,44 +15,6 @@ import Contact from "@/components/Contact";
 import CTABanner from "@/components/CTABanner";
 import Footer from "@/components/Footer";
 import Chatbot from "@/components/Chatbot";
-
-const CarShowcase = lazy(() => import("@/components/CarShowcase"));
-
-const showcaseBox = "relative w-full bg-gradient-hero";
-const showcaseStyle = { height: "70vh", minHeight: "420px", maxHeight: "720px" } as const;
-
-/** Downloads the heavy 3D scene only when the visitor scrolls near it. */
-const DeferredCarShowcase = () => {
-  const ref = useRef<HTMLDivElement>(null);
-  const [show, setShow] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || typeof IntersectionObserver === "undefined") {
-      setShow(true);
-      return;
-    }
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setShow(true);
-          io.disconnect();
-        }
-      },
-      { rootMargin: "400px" }
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
-  const placeholder = <div className={showcaseBox} style={showcaseStyle} aria-hidden="true" />;
-
-  return (
-    <div ref={ref}>
-      {show ? <Suspense fallback={placeholder}><CarShowcase /></Suspense> : placeholder}
-    </div>
-  );
-};
 
 const Index = () => {
   const { hash } = useLocation();

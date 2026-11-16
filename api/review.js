@@ -1,5 +1,5 @@
-// POST /api/review — visitors submit a testimonial. It is stored UNPUBLISHED;
-// an admin must approve it (Admin → Testimonials) before it appears on the site.
+// POST /api/review \u2014 visitors submit a testimonial. It is stored UNPUBLISHED;
+// an admin must approve it (Admin \u2192 Testimonials) before it appears on the site.
 import { NAME_RE, burstLimited, cleanText, clientIp, guard, hashValue, readJson, send, supabaseConfig } from "./_lib/http.js";
 import { countRows, insertRow } from "./_lib/supabase.js";
 import { notify } from "./_lib/email.js";
@@ -75,15 +75,15 @@ export default async function handler(req, res) {
 
   try {
     await notify({
-      subject: `New review awaiting approval: ${data.name} (${data.rating}★)`,
-      heading: "New website review — awaiting approval",
+      subject: `New review awaiting approval: ${data.name} (${data.rating}\u2605)`,
+      heading: "New website review \u2014 awaiting approval",
       rows: [
         ["Name", data.name],
-        ["Course / role", data.role || "—"],
+        ["Course / role", data.role || "\u2014"],
         ["Rating", `${data.rating} / 5`],
         ["Review", data.content],
       ],
-      footer: "Approve or delete it in Admin → Testimonials. It is hidden until you publish it.",
+      footer: "Approve or delete it in Admin \u2192 Testimonials. It is hidden until you publish it.",
     });
   } catch (e) {
     console.error("notification error", e?.message);

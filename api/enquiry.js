@@ -1,7 +1,7 @@
-// POST /api/enquiry — receives booking/enquiry forms, stores them in Supabase
+// POST /api/enquiry \u2014 receives booking/enquiry forms, stores them in Supabase
 // and emails the school via Resend.
 //
-// Required env (Vercel → Project → Settings → Environment Variables):
+// Required env (Vercel \u2192 Project \u2192 Settings \u2192 Environment Variables):
 //   SUPABASE_SERVICE_ROLE_KEY   server-only secret, NEVER prefix with VITE_
 //   SUPABASE_URL                (falls back to VITE_SUPABASE_URL)
 //   RESEND_API_KEY              for email notifications (optional but recommended)
@@ -116,7 +116,7 @@ export default async function handler(req, res) {
     if (recent >= IP_LIMIT_PER_HOUR) {
       return send(res, 429, {
         ok: false,
-        error: "You've sent several requests already. We'll be in touch soon — or message us on WhatsApp.",
+        error: "You've sent several requests already. We'll be in touch soon \u2014 or message us on WhatsApp.",
       });
     }
 
@@ -136,21 +136,21 @@ export default async function handler(req, res) {
   // Saved. Email failure must not fail the user's submission.
   try {
     await notify({
-      subject: `New enquiry: ${data.full_name}${data.service ? ` — ${data.service}` : ""}`,
-      heading: "New enquiry — Marvel Driving School",
+      subject: `New enquiry: ${data.full_name}${data.service ? ` \u2014 ${data.service}` : ""}`,
+      heading: "New enquiry \u2014 Marvel Driving School",
       replyTo: data.email,
       rows: [
         ["Name", data.full_name],
         ["Phone", data.phone],
-        ["Email", data.email || "—"],
-        ["Course", data.service || "—"],
-        ["Vehicle", data.vehicle || "—"],
-        ["Branch", data.branch || "—"],
-        ["Preferred time", data.preferred_time || "—"],
+        ["Email", data.email || "\u2014"],
+        ["Course", data.service || "\u2014"],
+        ["Vehicle", data.vehicle || "\u2014"],
+        ["Branch", data.branch || "\u2014"],
+        ["Preferred time", data.preferred_time || "\u2014"],
         ["Form", SOURCE_LABELS[data.source]],
-        ["Message", data.message || "—"],
+        ["Message", data.message || "\u2014"],
       ],
-      footer: data.email ? "Reply to this email to answer the student directly." : "No email given — call or WhatsApp the student.",
+      footer: data.email ? "Reply to this email to answer the student directly." : "No email given \u2014 call or WhatsApp the student.",
     });
   } catch (e) {
     console.error("notification error", e?.message);

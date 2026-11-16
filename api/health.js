@@ -1,4 +1,4 @@
-// GET /api/health — configuration check. Reports only WHETHER settings exist
+// GET /api/health \u2014 configuration check. Reports only WHETHER settings exist
 // and HTTP status codes. Never returns values, error messages or data.
 import { env, send, supabaseConfig } from "./_lib/http.js";
 import { countRows } from "./_lib/supabase.js";

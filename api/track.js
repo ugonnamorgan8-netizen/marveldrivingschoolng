@@ -1,4 +1,4 @@
-// POST /api/track — privacy-friendly first-party analytics (page views + CTA clicks).
+// POST /api/track \u2014 privacy-friendly first-party analytics (page views + CTA clicks).
 // No cookies, no raw IPs: visitors are counted with a salted hash that rotates daily.
 import { burstLimited, cleanText, clientIp, guard, hashValue, readJson, send, supabaseConfig } from "./_lib/http.js";
 import { insertRow } from "./_lib/supabase.js";

@@ -26,10 +26,10 @@ export const VEHICLES = [
 ];
 
 export const BRANCHES = [
-  "Head Office – Old Timber Junction, Umuahia",
-  "Office 1 – Umudike",
-  "Office 2 – BCA Road (Practical Training Ground)",
-  "Office 3 – Aba Road",
+  "Head Office \u2013 Old Timber Junction, Umuahia",
+  "Office 1 \u2013 Umudike",
+  "Office 2 \u2013 BCA Road (Practical Training Ground)",
+  "Office 3 \u2013 Aba Road",
 ];
 
 export const PREFERRED_TIMES = ["Morning", "Afternoon", "Any time"];

@@ -1,8 +1,8 @@
 // Minimal Supabase REST helpers for the server functions (service role, server-only).
 import { supabaseConfig } from "./http.js";
 
-// Legacy service_role keys are JWTs ("eyJ…") and also go in Authorization.
-// New-style secret keys ("sb_secret_…") must only be sent in the apikey header.
+// Legacy service_role keys are JWTs ("eyJ\u2026") and also go in Authorization.
+// New-style secret keys ("sb_secret_\u2026") must only be sent in the apikey header.
 const headers = (key, extra = {}) => ({
   apikey: key,
   ...(key.startsWith("eyJ") ? { Authorization: `Bearer ${key}` } : {}),
@@ -32,7 +32,7 @@ export const insertRow = async (table, row, legacyRow) => {
 
   let res = await attempt(row);
   if (!res.ok && legacyRow && isMissingColumn(res.status, res.text)) {
-    console.warn(`${table}: new columns missing — run the launch SQL migration. Using legacy insert.`);
+    console.warn(`${table}: new columns missing \u2014 run the launch SQL migration. Using legacy insert.`);
     res = await attempt(legacyRow);
   }
   if (res.ok) return { ok: true };
@@ -48,7 +48,7 @@ export const countRows = async (table, filter, { raw = false } = {}) => {
     headers: headers(serviceKey, { Prefer: "count=exact" }),
   });
   if (raw) return { ok: r.ok, status: r.status };
-  if (!r.ok) return 0; // e.g. column not migrated yet — the DB trigger still protects
+  if (!r.ok) return 0; // e.g. column not migrated yet \u2014 the DB trigger still protects
   const range = r.headers.get("content-range") || "*/0";
   return Number(range.split("/")[1]) || 0;
 };
